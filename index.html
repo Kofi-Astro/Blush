@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blush Closet | Luxury Fashion &amp; Hair, Afienya - Accra</title>
+<meta name="description" content="Blush Closet — high-end fashion design and luxury ladies' hair, Afienya - Accra. Bridal, ready-to-wear, custom couture and premium hair.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-light:#E8C97A; --gold-dark:#8B6914; --gold-ink:var(--gold);
+  --black:#0A0A0A; --black2:#131313; --black3:#1C1C1C;
+  --cream:#F5EDD8; --cream2:#EDE0C4; --text:#B9B2A2; --white:#FAFAF5;
+  /* Fixed — do NOT flip with the theme toggle. Nav, hero, ticker, the
+     category strip, CTA banner, lookbook photo captions, and the stats
+     strip all sit on permanently-dark scrims (video/photos/gold), so
+     their text stays legible regardless of which theme the rest of the
+     page is in. */
+  --ink-on-gold:#0A0A0A;
+  --chrome-ink:#FAFAF5;
+  --chrome-soft:#F5EDD8;
+  --chrome-body:#B9B2A2;
+}
+/* ── LIGHT THEME ──
+   Only the flat content sections (About, Lookbook shell, Contact,
+   Footer, page background) participate — see the comment above. */
+html[data-theme="light"] {
+  --black:#FAF7F2; --black2:#F1EAD8; --black3:#EAE1CB;
+  --cream:#2B2013; --text:#4A453D; --white:#161310;
+  --gold-ink:var(--gold-dark);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;overflow-x:hidden;transition:background-color 0.4s ease,color 0.4s ease}
+section,footer,.contact-form input,.contact-form select,.contact-form textarea{transition:background-color 0.4s ease,color 0.4s ease,border-color 0.4s ease}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:0.25}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.4rem 5rem;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s;background:linear-gradient(to bottom,rgba(8,8,8,0.85),transparent)}
+nav.scrolled{background:rgba(8,8,8,0.97);backdrop-filter:blur(16px);border-bottom:1px solid rgba(201,168,76,0.14);padding:1rem 5rem}
+.logo-wrap{text-decoration:none;display:flex;align-items:center;gap:0.9rem}
+.logo-emblem{width:46px;height:46px;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-emblem::before{content:'✦';font-size:1.1rem;color:var(--gold)}
+.logo-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--gold);line-height:1.1;letter-spacing:0.03em}
+.logo-sub{font-size:0.56rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--cream2);opacity:0.7}
+.nav-links{display:flex;gap:2.4rem;list-style:none;align-items:center}
+.nav-links a{text-decoration:none;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--cream2);transition:color 0.3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transition:transform 0.3s}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.theme-toggle{width:36px;height:36px;border:1px solid rgba(201,168,76,0.35);background:transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.3s;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--gold)}
+.theme-toggle svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:1.6}
+.nav-cta{background:var(--gold);color:var(--ink-on-gold);border:none;padding:0.65rem 1.7rem;font-size:0.66rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:'Montserrat',sans-serif}
+.nav-cta:hover{background:var(--gold-light);box-shadow:0 8px 24px rgba(201,168,76,0.3)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--gold);transition:all 0.3s}
+
+/* ── HERO (video loop) ── */
+.hero{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:center}
+.hero-media{position:absolute;inset:0;z-index:0;background:#0A0A0A}
+.hero-media video{width:100%;height:100%;object-fit:cover;display:block}
+.hero-media.no-video video{display:none}
+.hero-photo-fallback{position:absolute;inset:0;display:none}
+.hero-photo-fallback.active{display:block}
+.hero-photo-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1.1);transition:opacity 1.8s ease;animation:heroKenBurns 9s linear forwards}
+.hero-photo-slide.on{opacity:1}
+@keyframes heroKenBurns{from{transform:scale(1.12)}to{transform:scale(1)}}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(6,6,6,0.9) 0%,rgba(6,6,6,0.6) 55%,rgba(6,6,6,0.4) 100%);z-index:1}
+.hero-content{position:relative;z-index:2;padding:0 5rem;max-width:680px}
+.hero-eyebrow{display:flex;align-items:center;gap:1rem;margin-bottom:1.6rem;animation:fadeUp 1s 0.1s both}
+.eyebrow-line{width:35px;height:1px;background:var(--gold)}
+.eyebrow-text{font-size:0.64rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold)}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,5.8vw,6rem);font-weight:900;color:var(--chrome-ink);line-height:1.02;margin-bottom:1.2rem;animation:fadeUp 1s 0.2s both}
+.hero-h1 em{font-style:italic;color:var(--gold);display:block}
+.hero-tagline{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;color:var(--cream2);letter-spacing:0.05em;margin-bottom:1.8rem;animation:fadeUp 1s 0.3s both}
+.hero-desc{font-size:0.85rem;line-height:1.95;color:var(--chrome-body);max-width:460px;margin-bottom:2.6rem;animation:fadeUp 1s 0.4s both}
+.hero-actions{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;animation:fadeUp 1s 0.5s both}
+.btn-gold{background:var(--gold);color:var(--ink-on-gold);border:none;padding:1rem 2.4rem;font-family:'Montserrat',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 10px 35px rgba(201,168,76,0.35)}
+.btn-outline{background:transparent;color:var(--chrome-soft);border:1px solid rgba(201,168,76,0.35);padding:0.95rem 2rem;font-family:'Montserrat',sans-serif;font-size:0.7rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.hero-contact-strip{display:flex;gap:2rem;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(201,168,76,0.14);animation:fadeUp 1s 0.6s both;flex-wrap:wrap}
+.hc-item{display:flex;align-items:center;gap:0.7rem}
+.hc-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);display:block}
+.hc-value{font-size:0.82rem;color:var(--chrome-soft);font-weight:500;text-decoration:none}
+.hc-value:hover{color:var(--gold)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TICKER ── */
+.ticker{background:var(--gold);padding:0.8rem 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-block;animation:tick 30s linear infinite}
+.ticker-item{display:inline-block;font-size:0.65rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--ink-on-gold);padding:0 2.5rem}
+.ticker-sep{display:inline-block;width:5px;height:5px;background:rgba(8,8,8,0.35);border-radius:50%;vertical-align:middle}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── GENERAL ── */
+section{padding:6.5rem 5rem}
+.sec-label{display:flex;align-items:center;gap:1rem;font-size:0.63rem;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-ink);margin-bottom:1rem}
+.sec-label::before{content:'';display:block;width:28px;height:1px;background:var(--gold)}
+.sec-h2{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3.5vw,3.2rem);font-weight:700;color:var(--white);line-height:1.15;margin-bottom:1.3rem}
+.sec-h2 em{font-style:italic;color:var(--gold)}
+.sec-p{font-size:0.88rem;line-height:1.95;color:var(--text);max-width:540px}
+
+/* ── ABOUT THE DESIGNER ── */
+#about{background:var(--black2)}
+.about-layout{display:grid;grid-template-columns:0.85fr 1.15fr;gap:5rem;align-items:center}
+.about-visual{position:relative;height:560px}
+.av-main{position:absolute;top:0;left:0;width:78%;height:76%;background:#222 center/cover no-repeat;filter:brightness(0.7) saturate(0.9)}
+.av-sec{position:absolute;bottom:0;right:0;width:56%;height:48%;background:#222 center/cover no-repeat;filter:brightness(0.7) saturate(0.9);border:5px solid var(--black2)}
+.av-badge{position:absolute;top:44%;left:48%;transform:translate(-50%,-50%);background:var(--gold);color:var(--ink-on-gold);width:112px;height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2}
+.av-badge strong{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:900;line-height:1}
+.av-badge span{font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;font-family:'Montserrat',sans-serif;font-weight:700;margin-top:0.25rem}
+.about-body p{font-size:0.9rem;line-height:1.95;color:var(--text);max-width:52ch;margin-bottom:1.3rem}
+.pull-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;color:var(--cream);line-height:1.4;margin:1.8rem 0;padding-left:1.6rem;border-left:2px solid var(--gold)}
+.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(201,168,76,0.14)}
+.about-stats .stat-n{font-family:'Playfair Display',serif;font-size:2.1rem;font-weight:900;color:var(--gold);display:block;line-height:1;margin-bottom:0.3rem}
+.about-stats .stat-l{font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--text)}
+
+/* ── CATEGORY STRIP (fashion + hair, links into lookbook) ── */
+.photo-strip{height:420px;position:relative;overflow:hidden;display:flex;gap:0}
+.ps-panel{flex:1;position:relative;overflow:hidden;transition:flex 0.6s cubic-bezier(0.25,0.46,0.45,0.94);cursor:pointer;border:none;background:none;padding:0}
+.ps-panel:hover{flex:2.1}
+.ps-panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.5) saturate(0.85);transition:filter 0.5s}
+.ps-panel:hover img{filter:brightness(0.72) saturate(1)}
+.ps-panel-label{position:absolute;bottom:0;left:0;right:0;padding:1.3rem 1rem;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 100%);transform:translateY(6px);transition:transform 0.4s;text-align:center}
+.ps-panel:hover .ps-panel-label{transform:translateY(0)}
+.ps-panel-label span{font-family:'Playfair Display',serif;color:var(--chrome-ink);font-size:1rem;font-weight:700;display:block}
+.ps-panel-label small{font-size:0.62rem;letter-spacing:0.2em;color:var(--gold-light);text-transform:uppercase}
+
+/* ── LOOKBOOK ── */
+#lookbook{background:var(--black)}
+.lb-intro{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;flex-wrap:wrap;gap:1.5rem}
+.lb-tabs{display:flex;gap:0.5rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.lbtab{background:transparent;border:1px solid rgba(201,168,76,0.25);color:var(--text);padding:0.55rem 1.4rem;font-size:0.67rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:'Montserrat',sans-serif}
+.lbtab.active,.lbtab:hover{background:var(--gold);border-color:var(--gold);color:var(--ink-on-gold)}
+.lb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lb-card{position:relative;overflow:hidden;cursor:pointer;height:300px}
+.lb-card.wide{grid-column:span 2}
+.lb-card.tall{grid-row:span 2;height:100%}
+.lb-card img{width:100%;height:100%;object-fit:cover;filter:brightness(0.62) saturate(0.85);transition:transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94),filter 0.5s}
+.lb-card:hover img{transform:scale(1.08);filter:brightness(0.8) saturate(1)}
+.lb-card-info{position:absolute;bottom:0;left:0;right:0;padding:1.2rem 1.4rem;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,transparent 100%)}
+.lb-card-info h3{font-family:'Playfair Display',serif;color:var(--chrome-ink);font-size:1.1rem;font-weight:700;margin-bottom:0.1rem}
+.lb-card-info p{font-size:0.62rem;letter-spacing:0.16em;color:var(--gold-light);text-transform:uppercase}
+.lb-pill{position:absolute;top:1rem;right:1rem;background:rgba(8,8,8,0.65);border:1px solid var(--gold);color:var(--gold-light);font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:0.28rem 0.7rem;backdrop-filter:blur(3px)}
+.lb-hidden{display:none !important}
+
+/* All-tab carousel: auto-populated from however many image1, image2...
+   files actually exist, rather than a fixed curated set. */
+.lb-carousel-wrap{position:relative;display:none;align-items:center;gap:0.8rem}
+.lb-carousel-wrap.active{display:flex}
+.lb-carousel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding-bottom:8px}
+.lb-carousel::-webkit-scrollbar{height:5px}
+.lb-carousel::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.35)}
+.lb-slide{position:relative;flex:0 0 280px;height:360px;scroll-snap-align:start;overflow:hidden;cursor:pointer;background:var(--black3)}
+.lb-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(0.68) saturate(0.85);transition:transform 0.6s ease,filter 0.4s ease}
+.lb-slide:hover img{transform:scale(1.06);filter:brightness(0.85) saturate(1)}
+.lb-slide .lb-card-info{position:absolute;bottom:0;left:0;right:0;padding:1rem 1.1rem;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 100%)}
+.lb-slide .lb-card-info h3{font-family:'Playfair Display',serif;color:var(--chrome-ink);font-size:0.95rem;font-weight:700;margin-bottom:0.1rem}
+.lb-slide .lb-card-info p{font-size:0.58rem;letter-spacing:0.14em;color:var(--gold-light);text-transform:uppercase}
+.lb-slide .lb-pill{top:0.7rem;right:0.7rem;font-size:0.52rem}
+.lbc-arrow{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:1px solid rgba(201,168,76,0.35);background:var(--black2);color:var(--gold);font-size:1.3rem;line-height:1;cursor:pointer;transition:border-color 0.3s;display:flex;align-items:center;justify-content:center}
+.lbc-arrow:hover{border-color:var(--gold)}
+.lb-carousel-status{grid-column:1/-1;padding:2rem;text-align:center;color:var(--text);font-size:0.8rem}
+.lb-slide video{width:100%;height:100%;object-fit:cover;filter:brightness(0.68) saturate(0.85);pointer-events:none}
+.lb-slide .lbc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(8,8,8,0.55);border:1px solid var(--gold);color:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:0.9rem;pointer-events:none}
+
+/* Lightbox — opens for any lookbook photo (or video), from either the
+   All-tab carousel or a category grid. */
+.lightbox{position:fixed;inset:0;background:rgba(5,5,5,0.96);z-index:2000;display:none;align-items:center;justify-content:center;padding:4vh 4vw}
+.lightbox.show{display:flex}
+.lightbox-stage{max-width:88vw;max-height:80vh;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.lightbox-stage img,.lightbox-stage video{max-width:88vw;max-height:74vh;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.lightbox-caption{text-align:center}
+.lightbox-caption h3{font-family:'Playfair Display',serif;font-style:italic;color:var(--chrome-ink);font-size:1.2rem}
+.lightbox-caption p{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);margin-top:0.2rem}
+.lightbox-close,.lightbox-prev,.lightbox-next{position:absolute;background:rgba(20,20,20,0.6);border:1px solid rgba(201,168,76,0.35);color:var(--gold);cursor:pointer;transition:border-color 0.3s;display:flex;align-items:center;justify-content:center}
+.lightbox-close:hover,.lightbox-prev:hover,.lightbox-next:hover{border-color:var(--gold)}
+.lightbox-close{top:1.5rem;right:1.5rem;width:42px;height:42px;border-radius:50%;font-size:1.4rem}
+.lightbox-prev,.lightbox-next{top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;font-size:1.6rem}
+.lightbox-prev{left:1.5rem}
+.lightbox-next{right:1.5rem}
+@media(max-width:700px){
+  .lightbox-prev,.lightbox-next{width:40px;height:40px;font-size:1.3rem}
+  .lightbox-prev{left:0.6rem}
+  .lightbox-next{right:0.6rem}
+  .lb-slide{flex-basis:220px;height:290px}
+}
+
+/* ── STATS STRIP ── */
+.stats-strip{background:var(--gold);padding:3.2rem 5rem;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{text-align:center}
+.stat-n{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--ink-on-gold);display:block;line-height:1;margin-bottom:0.4rem}
+.stat-l{font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(8,8,8,0.65);font-weight:600}
+
+/* ── CTA BANNER ── */
+.cta-banner{position:relative;padding:7rem 5rem;text-align:center;overflow:hidden}
+.cta-bg-img{position:absolute;inset:0;background:#111 center/cover no-repeat;filter:brightness(0.16) saturate(0.5)}
+.cta-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(8,8,8,0.42) 0%,rgba(8,8,8,0.92) 100%)}
+.cta-content{position:relative;z-index:2}
+.cta-content .sec-label{justify-content:center;color:var(--gold)}
+.cta-content .sec-label::before{display:none}
+.cta-h2{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4.5vw,4rem);font-weight:900;color:var(--chrome-ink);line-height:1.1;margin-bottom:1.3rem}
+.cta-h2 em{font-style:italic;color:var(--gold)}
+.cta-p{font-size:0.88rem;line-height:1.85;color:var(--chrome-body);max-width:500px;margin:0 auto 2.5rem}
+.cta-actions{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap}
+
+/* ── CONTACT / BOOKING ── */
+#contact{background:var(--black2)}
+.contact-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:5rem;align-items:start}
+.cib-detail{display:flex;gap:1.2rem;align-items:flex-start;padding:1.4rem 0;border-bottom:1px solid rgba(201,168,76,0.1)}
+.cib-detail:last-child{border-bottom:none}
+.cib-icon{width:40px;height:40px;border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0}
+.cib-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-ink);display:block;margin-bottom:0.3rem}
+.cib-value{font-size:0.85rem;color:var(--cream);text-decoration:none;font-weight:500}
+.cib-value:hover{color:var(--gold)}
+
+.contact-form{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
+.contact-form .full{grid-column:span 2}
+.form-field label{display:block;font-size:0.63rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-ink);margin-bottom:0.6rem}
+.form-field input,.form-field select,.form-field textarea{width:100%;background:transparent;border:1px solid rgba(201,168,76,0.28);color:var(--white);padding:0.85rem 0.9rem;font-family:'Montserrat',sans-serif;font-size:0.85rem;transition:border-color 0.3s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--gold)}
+.form-field select option{background:var(--black2);color:var(--white)}
+.form-field textarea{resize:vertical;min-height:110px}
+.btn-submit{grid-column:span 2;background:var(--gold);color:var(--ink-on-gold);border:none;padding:1.1rem;font-family:'Montserrat',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;margin-top:0.4rem}
+.btn-submit:hover{background:var(--gold-light)}
+.btn-submit:disabled{opacity:0.55;cursor:not-allowed}
+.form-note{grid-column:span 2;font-size:0.72rem;color:var(--text);line-height:1.7}
+.form-status{grid-column:span 2;font-size:0.78rem;padding:0.9rem 1rem;border:1px solid var(--gold);color:var(--cream);display:none}
+.form-status.show{display:block}
+.form-status.error{border-color:#c66;color:#e08a8a}
+@media(max-width:700px){.contact-form{grid-template-columns:1fr}.contact-form .full,.btn-submit,.form-note,.form-status{grid-column:span 1}}
+
+/* ── FOOTER ── */
+footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(201,168,76,0.1)}
+.footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:3rem;padding-bottom:3rem}
+.footer-brand .logo-name{font-size:1.4rem}
+.footer-brand p{font-size:0.8rem;line-height:1.8;color:var(--text);margin-top:1rem;max-width:32ch}
+.footer-col h4{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.7rem}
+.footer-col a{font-size:0.8rem;color:var(--text);text-decoration:none;transition:color 0.3s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid rgba(201,168,76,0.1);font-size:0.72rem;color:rgba(200,185,138,0.4)}
+.fb-links{display:flex;gap:1.8rem}
+.fb-links a{font-size:0.7rem;color:rgba(200,185,138,0.4);text-decoration:none;transition:color 0.3s}
+.fb-links a:hover{color:var(--gold)}
+
+/* ── REVEAL ── */
+.r{opacity:0;transform:translateY(26px);transition:opacity 0.85s cubic-bezier(0.16,1,0.3,1),transform 0.85s cubic-bezier(0.16,1,0.3,1)}
+.r.vis{opacity:1;transform:translateY(0)}
+.r2{transition-delay:0.1s}.r3{transition-delay:0.18s}.r4{transition-delay:0.26s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  nav,nav.scrolled{padding:1.2rem 2rem}
+  section{padding:5rem 2rem}
+  .hero-content{padding:0 2rem}
+  .stats-strip{padding:3rem 2rem}
+  .about-layout{grid-template-columns:1fr}
+  .about-visual{display:none}
+  .lb-grid{grid-template-columns:1fr 1fr}
+  .lb-card.wide{grid-column:span 2}
+  .contact-layout{grid-template-columns:1fr;gap:3rem}
+  .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .photo-strip{height:300px}
+}
+@media(max-width:700px){
+  .hero-h1{font-size:2.7rem}
+  .stats-strip{grid-template-columns:1fr 1fr;gap:2rem}
+  .lb-grid{grid-template-columns:1fr}
+  .lb-card.wide{grid-column:span 1}
+  .lb-card.tall{grid-row:span 1;height:300px}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:1rem;text-align:center}
+  .lb-intro{flex-direction:column;align-items:flex-start}
+  .hero-contact-strip{flex-direction:column;gap:1rem}
+  .photo-strip{height:auto;flex-direction:column}
+  .ps-panel{height:160px}
+  .ps-panel:hover{flex:1}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#top" class="logo-wrap">
+    <img src="logo.JPG" alt="Blush Closet Logo" class="logo-emblem"></>
+    <div>
+      <div class="logo-name">Blush Closet</div>
+      <div class="logo-sub">Fashion &amp; Luxury Hair · Afienya - Accra</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">Designer</a></li>
+    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between dark and light theme">
+        <svg id="themeIconMoon" viewBox="0 0 24 24"><path d="M21 12.6A9 9 0 1111.4 3a7 7 0 009.6 9.6z"/></svg>
+        <svg id="themeIconSun" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      </button>
+    </li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Book Consultation</button>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-media" id="heroMedia">
+    <!-- Video src is set by the script at the bottom from the HERO_VIDEOS
+         list — edit that list to add/remove reels. poster shows before
+         playback starts and while a video is loading. -->
+    <video id="heroVideo" muted playsinline poster="image1.jpg"></video>
+    <!-- Photo-slideshow fallback: only shown if every video in HERO_VIDEOS
+         fails to load (e.g. none uploaded yet). Cycles through HERO_PHOTOS
+         in a shuffled order that's re-shuffled every full pass. -->
+    <div class="hero-photo-fallback" id="heroPhotoFallback"></div>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow"><div class="eyebrow-line"></div><span class="eyebrow-text">Fashion House &amp; Luxury Hair · Afienya - Accra, Ghana</span></div>
+    <h1 class="hero-h1">Fit in style,<br><em>Stand Out In Confidence</em></h1> <!--&amp;-->
+    <p class="hero-tagline">Made-to-measure fashion. Luxury hair. One closet.</p>
+    <p class="hero-desc">Blush Closet designs bridal, ready-to-wear, and fully custom couture — and sources the luxury hair to match. Every piece fitted in person, every install finished by hand.</p>
+    <div class="hero-actions">
+      <a href="#lookbook" class="btn-gold">View the Lookbook</a>
+      <a href="#contact" class="btn-outline">Book a Consultation</a>
+    </div>
+    <div class="hero-contact-strip">
+      <div class="hc-item">
+        <span style="font-size:1rem">📱</span>
+        <div><span class="hc-label">Mobile</span><a href="tel:+233554603902" class="hc-value">055 460 3902</a></div>
+      </div>
+      <div class="hc-item">
+        <span style="font-size:1rem">☎️</span>
+        <div><span class="hc-label">Work</span><a href="tel:+233541739326" class="hc-value">054 173 9326</a></div>
+      </div>
+      <div class="hc-item">
+        <span style="font-size:1rem">✉️</span>
+        <div><span class="hc-label">Email</span><a href="mailto:blushcloset1@gmail.com" class="hc-value">blushcloset1@gmail.com</a></div>
+      </div>
+      <div class="hc-item">
+        <span style="font-size:1rem">🎵</span>
+        <div><span class="hc-label">TikTok</span><a href="https://www.tiktok.com/@blushcloset_luxuryhair" target="_blank" rel="noopener" class="hc-value">@blushcloset_luxuryhair</a></div>
+      </div>
+      <div class="hc-item">
+        <span style="font-size:1rem">📷</span>
+        <div><span class="hc-label">Instagram</span><a href="https://www.instagram.com/blush_closetgh" target="_blank" rel="noopener" class="hc-value">@blush_closetgh</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="tickerInner">
+    <span class="ticker-item">Bridal Couture</span><span class="ticker-sep"></span>
+    <span class="ticker-item">Ready&#8209;to&#8209;Wear</span><span class="ticker-sep"></span>
+    <span class="ticker-item">Luxury Hair</span><span class="ticker-sep"></span>
+    <span class="ticker-item">Custom Atelier</span><span class="ticker-sep"></span>
+    <span class="ticker-item">Afienya - Accra, Ghana</span><span class="ticker-sep"></span>
+  </div>
+</div>
+
+<!-- ABOUT THE DESIGNER -->
+<section id="about">
+  <div class="about-layout">
+    <div class="about-visual r">
+      <div class="av-main" style="background-image:url('image2.jpg')"></div>
+      <div class="av-sec" style="background-image:url('image3.jpg')"></div>
+      <div class="av-badge"><strong>5+</strong><span>Years Crafting</span></div>
+    </div>
+    <div class="about-body">
+      <div class="sec-label r">The Designer</div>
+      <h2 class="sec-h2 r r2">Precision is <em>the softest luxury.</em></h2>
+      <p class="r r2">Blush Closet was founded on a simple belief: a garment — and the hair that frames it — should be engineered as carefully as they are imagined. Every silhouette starts as a hand-drafted pattern before a single seam is cut, and every unit of hair is hand-selected before it ever reaches an install chair.</p>
+      <blockquote class="pull-quote r r3">"I don't just dress a client. I finish the whole look — from the hem to the hairline."</blockquote>
+      <p class="r r3">Today the atelier produces considered fashion collections alongside bespoke bridal work and a curated line of luxury ladies' hair — wigs, extensions, and closures sourced for texture, density, and durability. Fittings and installs are done in person, by appointment.</p>
+      <div class="about-stats r r4">
+        <div class="stat"><span class="stat-n">200+</span><span class="stat-l">Clients Styled</span></div>
+        <div class="stat"><span class="stat-n">24</span><span class="stat-l">Collections</span></div>
+        <div class="stat"><span class="stat-n">2</span><span class="stat-l">Product Lines</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY STRIP -->
+<div class="photo-strip">
+  <button class="ps-panel" onclick="filterLookbook('bridal')">
+    <img src="image9.jpg" alt="Bridal couture">
+    <div class="ps-panel-label"><span>Bridal Couture</span><small>Gowns &amp; Veils</small></div>
+  </button>
+  <button class="ps-panel" onclick="filterLookbook('fashion')">
+    <img src="image5.jpg" alt="Ready-to-wear fashion">
+    <div class="ps-panel-label"><span>Ready-to-Wear</span><small>Everyday Luxury</small></div>
+  </button>
+  <button class="ps-panel" onclick="filterLookbook('hair')">
+    <img src="image6.jpg" alt="Luxury ladies' hair">
+    <div class="ps-panel-label"><span>Luxury Hair</span><small>Wigs &amp; Extensions</small></div>
+  </button>
+  <button class="ps-panel" onclick="filterLookbook('custom')">
+    <img src="image7.jpg" alt="Custom atelier commission">
+    <div class="ps-panel-label"><span>Custom Atelier</span><small>Made to Order</small></div>
+  </button>
+</div>
+
+<!-- LOOKBOOK -->
+<section id="lookbook">
+  <div class="lb-intro r">
+    <div>
+      <div class="sec-label">The Lookbook</div>
+      <h2 class="sec-h2">Fashion <em>&amp; Hair,</em><br>Side by Side</h2>
+    </div>
+    <p class="sec-p">Every look and install shown here is made or sourced to order. Filter by category to see fashion, bridal, hair, or fully custom work.</p>
+  </div>
+
+  <div class="lb-tabs r r2">
+    <button class="lbtab active" onclick="filterLookbook('all', this)">All</button>
+    <button class="lbtab" onclick="filterLookbook('fashion', this)">Ready-to-Wear</button>
+    <button class="lbtab" onclick="filterLookbook('bridal', this)">Bridal</button>
+    <button class="lbtab" onclick="filterLookbook('custom', this)">Custom Atelier</button>
+    <button class="lbtab" onclick="filterLookbook('hair', this)">Luxury Hair</button>
+  </div>
+
+  <!-- "All" tab: auto-populated on load from however many image1, image2...
+       files exist — browse it like a carousel rather than a fixed grid.
+       Click any photo to view it larger. -->
+  <div class="lb-carousel-wrap r r3 active" id="lbCarouselWrap">
+    <button class="lbc-arrow" id="lbCarouselPrev" aria-label="Scroll left">‹</button>
+    <div class="lb-carousel" id="lbCarousel">
+      <p class="lb-carousel-status">Loading the lookbook…</p>
+    </div>
+    <button class="lbc-arrow" id="lbCarouselNext" aria-label="Scroll right">›</button>
+  </div>
+
+  <div class="lb-grid r r3 lb-hidden" id="lookGrid">
+    <div class="lb-card wide" data-category="fashion">
+      <img src="image1.jpg" alt="Look 01 — Ready-to-Wear">
+      <span class="lb-pill">Look 01</span>
+      <div class="lb-card-info"><h3>Ivory Column</h3><p>Ready-to-Wear</p></div>
+    </div>
+    <div class="lb-card" data-category="bridal">
+      <img src="image8.jpg" alt="Look 02 — Bridal">
+      <span class="lb-pill">Look 02</span>
+      <div class="lb-card-info"><h3>Gilded Veil</h3><p>Bridal</p></div>
+    </div>
+    <div class="lb-card tall" data-category="hair">
+      <img src="image9.jpg" alt="Look 03 — Luxury Hair">
+      <span class="lb-pill">Look 03</span>
+      <div class="lb-card-info"><h3>Bone Straight 26"</h3><p>Luxury Hair</p></div>
+    </div>
+    <div class="lb-card" data-category="custom">
+      <img src="image10.jpg" alt="Look 04 — Custom Atelier">
+      <span class="lb-pill">Look 04</span>
+      <div class="lb-card-info"><h3>Draped Bronze</h3><p>Custom Atelier</p></div>
+    </div>
+    <div class="lb-card" data-category="fashion">
+      <img src="image2.jpg" alt="Look 05 — Ready-to-Wear">
+      <span class="lb-pill">Look 05</span>
+      <div class="lb-card-info"><h3>Noir Tailleur</h3><p>Ready-to-Wear</p></div>
+    </div>
+    <div class="lb-card wide" data-category="hair">
+      <img src="image3.jpg" alt="Look 06 — Luxury Hair">
+      <span class="lb-pill">Look 06</span>
+      <div class="lb-card-info"><h3>Body Wave Closure</h3><p>Luxury Hair</p></div>
+    </div>
+    <div class="lb-card" data-category="bridal">
+      <img src="image4.jpg" alt="Look 07 — Bridal">
+      <span class="lb-pill">Look 07</span>
+      <div class="lb-card-info"><h3>Petale Blanche</h3><p>Bridal</p></div>
+    </div>
+    <div class="lb-card" data-category="custom">
+      <img src="image5.jpg" alt="Look 08 — Custom Atelier">
+      <span class="lb-pill">Look 08</span>
+      <div class="lb-card-info"><h3>Soie Dorée</h3><p>Custom Atelier</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat"><span class="stat-n">200+</span><span class="stat-l">Clients Styled</span></div>
+  <div class="stat"><span class="stat-n">24</span><span class="stat-l">Collections</span></div>
+  <div class="stat"><span class="stat-n">5+</span><span class="stat-l">Years Crafting</span></div>
+  <div class="stat"><span class="stat-n">2</span><span class="stat-l">Product Lines</span></div>
+</div>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-bg-img" style="background-image:url('image6.jpg')"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content">
+    <div class="sec-label r">Ready When You Are</div>
+    <h2 class="cta-h2 r r2">Let's build your <em>next look.</em></h2>
+    <p class="cta-p r r2">Fashion, bridal, or hair — tell us what you're building for, and we'll take it from there.</p>
+    <div class="cta-actions r r3">
+      <a href="https://www.instagram.com/blush_closetgh" target="_blank" rel="noopener" class="btn-outline">See More on Instagram</a>
+      <a href="#contact" class="btn-gold">Book a Consultation</a>
+      <a href="https://www.tiktok.com/@blushcloset_luxuryhair" target="_blank" rel="noopener" class="btn-outline">See More on TikTok</a>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT / BOOKING -->
+<section id="contact">
+  <div class="contact-layout">
+    <div class="r">
+      <div class="sec-label">Consultation</div>
+      <h2 class="sec-h2">Begin Your <em>Fitting.</em></h2>
+      <p class="sec-p" style="margin-bottom:2rem;">Tell us what you're building for — a wedding, a wardrobe, a fresh install — and we'll follow up to schedule your consultation.</p>
+
+      <div class="cib-detail">
+        <div class="cib-icon">📱</div>
+        <div><span class="cib-label">Mobile</span><a href="tel:+233554603902" class="cib-value">055 460 3902</a></div>
+      </div>
+      <div class="cib-detail">
+        <div class="cib-icon">☎️</div>
+        <div><span class="cib-label">Work</span><a href="tel:+233541739326" class="cib-value">054 173 9326</a></div>
+      </div>
+      <div class="cib-detail">
+        <div class="cib-icon">✉️</div>
+        <div><span class="cib-label">Email</span><a href="mailto:blushcloset1@gmail.com" class="cib-value">blushcloset1@gmail.com</a></div>
+      </div>
+      <div class="cib-detail">
+        <div class="cib-icon">🎵</div>
+        <div><span class="cib-label">TikTok</span><a href="https://www.tiktok.com/@blushcloset_luxuryhair" target="_blank" rel="noopener" class="cib-value">@blushcloset_luxuryhair</a></div>
+      </div>
+      <div class="cib-detail">
+        <div class="cib-icon">📷</div>
+        <div><span class="cib-label">Instagram</span><a href="https://www.instagram.com/blush_closetgh" target="_blank" rel="noopener" class="cib-value">@blush_closetgh</a></div>
+      </div>
+      <div class="cib-detail">
+        <div class="cib-icon">📍</div>
+        <div><span class="cib-label">Location</span><span class="cib-value">By Appointment · Afienya - Accra, Ghana</span></div>
+      </div>
+    </div>
+
+    <form class="contact-form r r2" id="bookingForm">
+      <div class="form-field">
+        <label for="bc-fname">Full Name</label>
+        <input type="text" id="bc-fname" name="Full Name" required>
+      </div>
+      <div class="form-field">
+        <label for="bc-email">Email</label>
+        <input type="email" id="bc-email" name="Email" required>
+      </div>
+      <div class="form-field">
+        <label for="bc-phone">Phone</label>
+        <input type="tel" id="bc-phone" name="Phone">
+      </div>
+      <div class="form-field">
+        <label for="bc-interest">Interested In</label>
+        <select id="bc-interest" name="Interested In">
+          <option value="">Select an option</option>
+          <option value="Bridal Couture">Bridal Couture</option>
+          <option value="Ready-to-Wear">Ready-to-Wear</option>
+          <option value="Custom Atelier Commission">Custom Atelier Commission</option>
+          <option value="Luxury Hair">Luxury Hair (Wigs/Extensions)</option>
+        </select>
+      </div>
+      <div class="form-field full">
+        <label for="bc-date">Preferred Date</label>
+        <input type="date" id="bc-date" name="Preferred Date">
+      </div>
+      <div class="form-field full">
+        <label for="bc-message">Tell Us About the Look</label>
+        <textarea id="bc-message" name="Message" placeholder="Occasion, inspiration, timeline..." required></textarea>
+      </div>
+      <p class="form-status" id="formStatus"></p>
+      <button type="submit" class="btn-submit" id="submitBtn">Request Consultation</button>
+      <p class="form-note">We typically respond within two business days.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo-name" style="font-family:'Playfair Display',serif;color:var(--gold);">Blush Closet</div>
+      <p>A fashion house and luxury hair studio in Afienya - Accra — bridal, ready-to-wear, custom couture, and premium wigs &amp; extensions.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#about">The Designer</a></li>
+        <li><a href="#lookbook">Lookbook</a></li>
+        <li><a href="#contact">Book a Consultation</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="tel:+233554603902">Mobile · 055 460 3902</a></li>
+        <li><a href="tel:+233541739326">Work · 054 173 9326</a></li>
+        <li><a href="mailto:blushcloset1@gmail.com">blushcloset1@gmail.com</a></li>
+        <li><a href="https://www.tiktok.com/@blushcloset_luxuryhair" target="_blank" rel="noopener">TikTok · @blushcloset_luxuryhair</a></li>
+        <li><a href="https://www.instagram.com/blush_closetgh" target="_blank" rel="noopener">Instagram · @blush_closetgh</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Blush Closet. All rights reserved.</span>
+    <div class="fb-links">
+      <a href="tel:+233554603902">Call</a>
+      <a href="mailto:blushcloset1@gmail.com">Email</a>
+      <a href="https://www.tiktok.com/@blushcloset_luxuryhair" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://www.instagram.com/blush_closetgh" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Lightbox: opens for any Lookbook photo or video, from either the
+     All-tab carousel or a category grid. Populated entirely by JS. -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Lookbook viewer">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous look">‹</button>
+  <div class="lightbox-stage" id="lightboxStage"></div>
+  <button class="lightbox-next" id="lightboxNext" aria-label="Next look">›</button>
+</div>
+
+<script>
+// ── THEME TOGGLE ──
+// Defaults to the visitor's system preference on load. Note: this
+// doesn't persist across page reloads by design (no localStorage) —
+// once this file is live on your own domain, feel free to add
+// localStorage-based persistence if you'd like the choice to stick.
+const themeToggleBtn = document.getElementById('themeToggle');
+const moonIcon = document.getElementById('themeIconMoon');
+const sunIcon = document.getElementById('themeIconSun');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  moonIcon.style.display = theme === 'light' ? 'none' : 'block';
+  sunIcon.style.display = theme === 'light' ? 'block' : 'none';
+}
+
+const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+applyTheme(prefersLight ? 'light' : 'dark');
+
+themeToggleBtn.addEventListener('click', function () {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  applyTheme(isLight ? 'dark' : 'light');
+});
+
+// ── NAVBAR SCROLL ──
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+// ── HAMBURGER ──
+document.getElementById('hamburger').addEventListener('click', function() {
+  const links = document.querySelector('.nav-links');
+  if (links.style.display === 'flex') {
+    links.style.display = '';
+  } else {
+    links.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:rgba(8,8,8,0.98);padding:2rem;gap:1.5rem;z-index:999;border-bottom:1px solid rgba(201,168,76,0.15)';
+  }
+});
+
+// ── SCROLL REVEAL ──
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold:0.07, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.r').forEach(el => obs.observe(el));
+
+// ── HERO REEL: auto-detects however many videos/photos exist ──
+// No list to edit anymore — just follow the naming convention below
+// and drop files in. On load, the site probes for hero-reel-1.mp4,
+// hero-reel-2.mp4, hero-reel-3.mp4... and stops counting once it hits
+// a number that isn't there, so it always uses exactly what's
+// present. Same idea for the photo fallback, using image1, image2...
+// (any of .jpg/.jpeg/.png/.webp — mixed extensions are fine).
+const HERO_VIDEO_PREFIX = 'hero-reel-';
+const HERO_VIDEO_EXT = '.mp4';
+const MAX_HERO_VIDEOS = 20; // a ceiling, not a target — raise it if you ever add more than 12 clips
+
+const HERO_PHOTO_PREFIX = 'image';
+const HERO_PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
+const MAX_HERO_PHOTOS = 70; // same idea — raise if you ever need more than 20 fallback photos
+
+const heroVideo = document.getElementById('heroVideo');
+const heroMedia = document.getElementById('heroMedia');
+const heroPhotoFallback = document.getElementById('heroPhotoFallback');
+
+function shuffled(array) {
+  const copy = array.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+// -- Existence probing (runs once on page load) --
+function probeVideoExists(url) {
+  return fetch(url, { method: 'HEAD', cache: 'no-store' })
+    .then(res => (res.ok ? url : null))
+    .catch(() => null);
+}
+
+async function discoverVideos() {
+  const checks = [];
+  for (let i = 1; i <= MAX_HERO_VIDEOS; i++) {
+    checks.push(probeVideoExists(HERO_VIDEO_PREFIX + i + HERO_VIDEO_EXT));
+  }
+  const results = await Promise.all(checks);
+  return results.filter(Boolean);
+}
+
+function probeImage(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+async function probeImageAnyExt(index) {
+  for (const ext of HERO_PHOTO_EXTENSIONS) {
+    const url = HERO_PHOTO_PREFIX + index + ext;
+    if (await probeImage(url)) return url;
+  }
+  return null;
+}
+
+async function discoverPhotos() {
+  const checks = [];
+  for (let i = 1; i <= MAX_HERO_PHOTOS; i++) {
+    checks.push(probeImageAnyExt(i));
+  }
+  const results = await Promise.all(checks);
+  return results.filter(Boolean);
+}
+
+// -- Video rotation --
+let videoList = [];
+let videoOrder = [];
+let videoIndex = 0;
+let consecutiveFailures = 0;
+
+function playVideoAt(index) {
+  heroVideo.src = videoOrder[index];
+  heroVideo.load();
+  heroVideo.play().catch(() => {}); // autoplay may be blocked until user interacts; muted usually avoids this
+}
+
+function advanceVideo() {
+  videoIndex++;
+  if (videoIndex >= videoOrder.length) {
+    videoIndex = 0;
+    videoOrder = shuffled(videoList); // reshuffle so the next lap isn't identical
+  }
+  playVideoAt(videoIndex);
+}
+
+heroVideo.addEventListener('ended', function () {
+  consecutiveFailures = 0;
+  advanceVideo();
+});
+
+heroVideo.addEventListener('error', function () {
+  consecutiveFailures++;
+  if (consecutiveFailures >= Math.max(videoList.length, 1)) {
+    startPhotoFallback(); // every known video failed to actually play — fall back to photos
+  } else {
+    advanceVideo(); // skip this one, try the next
+  }
+});
+
+// -- Photo fallback: shuffled crossfade slideshow --
+function startPhotoFallback(photoList) {
+  heroMedia.classList.add('no-video');
+  heroPhotoFallback.classList.add('active');
+
+  const photos = (photoList && photoList.length) ? photoList : ['image1.jpg'];
+  let photoOrder = shuffled(photos);
+  let photoIndex = 0;
+
+  const slideEls = photoOrder.map(() => {
+    const el = document.createElement('div');
+    el.className = 'hero-photo-slide';
+    heroPhotoFallback.appendChild(el);
+    return el;
+  });
+
+  function showPhoto(index) {
+    slideEls.forEach(el => el.classList.remove('on'));
+    const el = slideEls[index];
+    el.style.backgroundImage = "url('" + photoOrder[index] + "')";
+    // restart the Ken Burns zoom animation on each slide
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+    el.classList.add('on');
+  }
+
+  showPhoto(photoIndex);
+
+  setInterval(function () {
+    photoIndex++;
+    if (photoIndex >= photoOrder.length) {
+      photoIndex = 0;
+      photoOrder = shuffled(photos); // reshuffle each full pass
+    }
+    showPhoto(photoIndex);
+  }, 6000);
+}
+
+// -- Boot: figure out what's actually there, then start the right mode --
+(async function initHeroMedia() {
+  videoList = await discoverVideos();
+  if (videoList.length > 0) {
+    videoOrder = shuffled(videoList);
+    playVideoAt(0);
+  } else {
+    const photos = await discoverPhotos();
+    startPhotoFallback(photos);
+  }
+})();
+
+// ── LOOKBOOK "ALL" CAROUSEL ──
+// Reuses the same image1, image2... probing as the hero fallback (any
+// of .jpg/.jpeg/.png/.webp), plus look-video-1, look-video-2...  for
+// videos — auto-detected the same way, so it always shows exactly
+// however many files actually exist. This carousel only appears on
+// the "All" tab; the category tabs still show the curated grid below.
+const MAX_LOOKBOOK_PHOTOS = 70; // ceiling, not a target
+const LOOKBOOK_VIDEO_PREFIX = 'look-video-';
+const LOOKBOOK_VIDEO_EXT = '.mp4';
+const MAX_LOOKBOOK_VIDEOS = 20;
+
+async function discoverLookbookPhotos() {
+  const checks = [];
+  for (let i = 1; i <= MAX_LOOKBOOK_PHOTOS; i++) {
+    checks.push(probeImageAnyExt(i));
+  }
+  const results = await Promise.all(checks);
+  return results.filter(Boolean).map(src => ({ type: 'image', src: src, title: '', label: '' }));
+}
+
+async function discoverLookbookVideos() {
+  const checks = [];
+  for (let i = 1; i <= MAX_LOOKBOOK_VIDEOS; i++) {
+    checks.push(probeVideoExists(LOOKBOOK_VIDEO_PREFIX + i + LOOKBOOK_VIDEO_EXT));
+  }
+  const results = await Promise.all(checks);
+  return results.filter(Boolean).map(src => ({ type: 'video', src: src, title: '', label: '' }));
+}
+
+const lbCarousel = document.getElementById('lbCarousel');
+const lbCarouselPrevBtn = document.getElementById('lbCarouselPrev');
+const lbCarouselNextBtn = document.getElementById('lbCarouselNext');
+let carouselItems = [];
+
+function renderCarousel(items) {
+  if (!items.length) {
+    lbCarousel.innerHTML = '<p class="lb-carousel-status">No photos yet — add image1.jpg (etc.) to the project folder.</p>';
+    return;
+  }
+  lbCarousel.innerHTML = items.map(function (item, i) {
+    const media = item.type === 'video'
+      ? '<video src="' + item.src + '" muted playsinline preload="metadata"></video><span class="lbc-play">&#9658;</span>'
+      : '<img src="' + item.src + '" alt="Lookbook photo ' + (i + 1) + '" loading="lazy">';
+    return '<div class="lb-slide" data-index="' + i + '">' + media + '</div>';
+  }).join('');
+
+  lbCarousel.querySelectorAll('.lb-slide').forEach(function (el) {
+    el.addEventListener('click', function () {
+      openLightbox(carouselItems, parseInt(el.getAttribute('data-index'), 10));
+    });
+  });
+}
+
+if (lbCarouselPrevBtn) lbCarouselPrevBtn.addEventListener('click', () => lbCarousel.scrollBy({ left: -320, behavior: 'smooth' }));
+if (lbCarouselNextBtn) lbCarouselNextBtn.addEventListener('click', () => lbCarousel.scrollBy({ left: 320, behavior: 'smooth' }));
+
+(async function initLookbookCarousel() {
+  const [photos, videos] = await Promise.all([discoverLookbookPhotos(), discoverLookbookVideos()]);
+  carouselItems = photos.concat(videos);
+  renderCarousel(carouselItems);
+})();
+
+// -- Curated grid is clickable too, opening the same lightbox --
+const curatedItems = Array.from(document.querySelectorAll('#lookGrid .lb-card')).map(function (card) {
+  const img = card.querySelector('img');
+  const title = card.querySelector('.lb-card-info h3');
+  const label = card.querySelector('.lb-card-info p');
+  return {
+    type: 'image',
+    src: img ? img.getAttribute('src') : '',
+    title: title ? title.textContent : '',
+    label: label ? label.textContent : ''
+  };
+});
+document.querySelectorAll('#lookGrid .lb-card').forEach(function (card, i) {
+  card.addEventListener('click', function () { openLightbox(curatedItems, i); });
+});
+
+// ── LIGHTBOX: opens for any Lookbook photo or video ──
+const lightbox = document.getElementById('lightbox');
+const lightboxStage = document.getElementById('lightboxStage');
+const lightboxClose = document.getElementById('lightboxClose');
+const lightboxPrevBtn = document.getElementById('lightboxPrev');
+const lightboxNextBtn = document.getElementById('lightboxNext');
+let activeLightboxSet = [];
+let activeLightboxIndex = 0;
+
+function renderLightboxStage() {
+  const item = activeLightboxSet[activeLightboxIndex];
+  if (!item) return;
+  const mediaHtml = item.type === 'video'
+    ? '<video src="' + item.src + '" controls autoplay playsinline></video>'
+    : '<img src="' + item.src + '" alt="' + (item.title || 'Lookbook photo') + '">';
+  const captionHtml = (item.title || item.label)
+    ? '<div class="lightbox-caption">' +
+        (item.title ? '<h3>' + item.title + '</h3>' : '') +
+        (item.label ? '<p>' + item.label + '</p>' : '') +
+      '</div>'
+    : '';
+  lightboxStage.innerHTML = mediaHtml + captionHtml;
+}
+
+function openLightbox(set, index) {
+  if (!set || !set.length) return;
+  activeLightboxSet = set;
+  activeLightboxIndex = index;
+  renderLightboxStage();
+  lightbox.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('show');
+  lightboxStage.innerHTML = ''; // also stops any playing video
+  document.body.style.overflow = '';
+}
+
+function stepLightbox(delta) {
+  if (!activeLightboxSet.length) return;
+  activeLightboxIndex = (activeLightboxIndex + delta + activeLightboxSet.length) % activeLightboxSet.length;
+  renderLightboxStage();
+}
+
+lightboxClose.addEventListener('click', closeLightbox);
+lightboxPrevBtn.addEventListener('click', () => stepLightbox(-1));
+lightboxNextBtn.addEventListener('click', () => stepLightbox(1));
+lightbox.addEventListener('click', function (e) { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', function (e) {
+  if (!lightbox.classList.contains('show')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') stepLightbox(-1);
+  if (e.key === 'ArrowRight') stepLightbox(1);
+});
+
+// ── LOOKBOOK FILTER (also driven by the category strip above it) ──
+function filterLookbook(category, btnEl) {
+  document.querySelectorAll('.lbtab').forEach(t => t.classList.remove('active'));
+  if (btnEl) {
+    btnEl.classList.add('active');
+  } else {
+    // Triggered from the photo-strip tiles rather than a tab click —
+    // highlight the matching tab and scroll the grid into view.
+    document.querySelectorAll('.lbtab').forEach(t => {
+      if (t.textContent.trim().toLowerCase().includes(category === 'fashion' ? 'ready' : category)) {
+        t.classList.add('active');
+      }
+    });
+    document.getElementById('lookbook').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  const grid = document.getElementById('lookGrid');
+  const carousel = document.getElementById('lbCarouselWrap');
+
+  if (category === 'all') {
+    // "All" browses the auto-detected carousel instead of the curated grid.
+    grid.classList.add('lb-hidden');
+    carousel.classList.add('active');
+  } else {
+    grid.classList.remove('lb-hidden');
+    carousel.classList.remove('active');
+    document.querySelectorAll('.lb-card').forEach(card => {
+      card.classList.toggle('lb-hidden', card.dataset.category !== category);
+    });
+  }
+}
+
+// ── BOOKING FORM (Formspree) ──
+function bcSendBooking(event) {
+  event.preventDefault();
+  const form = document.getElementById('bookingForm');
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('formStatus');
+  const originalText = btn.textContent;
+
+  status.className = 'form-status';
+  status.textContent = '';
+
+  const fd = new FormData(form);
+  fd.append('_subject', 'New Consultation Request — Blush Closet');
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  fetch('https://formspree.io/f/xzdnyora', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: fd
+  }).then(function (response) {
+    if (response.ok) {
+      form.reset();
+      status.textContent = 'Thank you — your request has been sent. We\'ll be in touch within two business days.';
+      status.classList.add('show');
+      btn.textContent = 'Sent ✓';
+      setTimeout(function () { btn.textContent = originalText; btn.disabled = false; }, 2500);
+    } else {
+      throw new Error('Formspree responded with an error');
+    }
+  }).catch(function () {
+    status.textContent = 'Something went wrong sending your request. Please try again, or reach us directly by email or TikTok.';
+    status.classList.add('show', 'error');
+    btn.disabled = false;
+    btn.textContent = originalText;
+  });
+}
+document.getElementById('bookingForm').addEventListener('submit', bcSendBooking);
+</script>
+</body>
+</html>
