@@ -726,11 +726,11 @@ document.querySelectorAll('.r').forEach(el => obs.observe(el));
 // (any of .jpg/.jpeg/.png/.webp — mixed extensions are fine).
 const HERO_VIDEO_PREFIX = 'hero-reel-';
 const HERO_VIDEO_EXT = '.mp4';
-const MAX_HERO_VIDEOS = 20; // a ceiling, not a target — raise it if you ever add more than 12 clips
+const MAX_HERO_VIDEOS = 100; // a ceiling, not a target — raise it if you ever add more than 12 clips
 
 const HERO_PHOTO_PREFIX = 'image';
 const HERO_PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
-const MAX_HERO_PHOTOS = 70; // same idea — raise if you ever need more than 20 fallback photos
+const MAX_HERO_PHOTOS = 500; // same idea — raise if you ever need more than 20 fallback photos
 
 const heroVideo = document.getElementById('heroVideo');
 const heroMedia = document.getElementById('heroMedia');
@@ -879,10 +879,10 @@ function startPhotoFallback(photoList) {
 // videos — auto-detected the same way, so it always shows exactly
 // however many files actually exist. This carousel only appears on
 // the "All" tab; the category tabs still show the curated grid below.
-const MAX_LOOKBOOK_PHOTOS = 70; // ceiling, not a target
+const MAX_LOOKBOOK_PHOTOS = 700; // ceiling, not a target
 const LOOKBOOK_VIDEO_PREFIX = 'look-video-';
 const LOOKBOOK_VIDEO_EXT = '.mp4';
-const MAX_LOOKBOOK_VIDEOS = 20;
+const MAX_LOOKBOOK_VIDEOS = 200;
 
 async function discoverLookbookPhotos() {
   const checks = [];
