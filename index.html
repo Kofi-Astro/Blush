@@ -178,9 +178,19 @@ section{padding:6.5rem 5rem}
 /* ── LOOKBOOK ── */
 #lookbook{background:var(--black)}
 .lb-intro{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;flex-wrap:wrap;gap:1.5rem}
-.lb-tabs{display:flex;gap:0.5rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.lb-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .lbtab{background:transparent;border:1px solid rgba(201,168,76,0.25);color:var(--text);padding:0.55rem 1.4rem;font-size:0.67rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;font-family:'Montserrat',sans-serif}
 .lbtab.active,.lbtab:hover{background:var(--gold);border-color:var(--gold);color:var(--ink-on-gold)}
+.lb-toolbar{display:none;justify-content:space-between;align-items:center;margin-bottom:1.6rem;padding-bottom:1.2rem;border-bottom:1px solid rgba(201,168,76,0.14);flex-wrap:wrap;gap:1rem}
+.lb-toolbar.active{display:flex}
+.lb-result-count{font-size:0.72rem;letter-spacing:0.08em;color:var(--text);text-transform:uppercase}
+.lb-toolbar-controls{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.lb-avail-toggle{display:flex;align-items:center;gap:0.5rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;font-size:0.66rem;color:var(--text)}
+.lb-avail-toggle input{accent-color:var(--gold);width:14px;height:14px;cursor:pointer}
+.lb-sort-select{background:transparent;border:1px solid rgba(201,168,76,0.3);color:var(--text);padding:0.5rem 0.9rem;font-family:'Montserrat',sans-serif;font-size:0.66rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer}
+.lb-sort-select:focus{outline:none;border-color:var(--gold)}
+.lb-sort-select option{background:var(--black2);color:var(--white)}
+.lb-card-info .stock-line{display:block;margin-top:0.15rem;font-size:0.58rem;letter-spacing:0.1em;color:var(--text);text-transform:uppercase;opacity:0.85}
 .lb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .lb-card{position:relative;overflow:hidden;cursor:pointer;height:300px}
 .lb-card.wide{grid-column:span 2}
@@ -212,6 +222,7 @@ section{padding:6.5rem 5rem}
 .lb-slide .lb-card-info h3{font-family:'Playfair Display',serif;color:var(--chrome-ink);font-size:0.95rem;font-weight:700;margin-bottom:0.1rem}
 .lb-slide .lb-card-info p{font-size:0.58rem;letter-spacing:0.14em;color:var(--gold-light);text-transform:uppercase}
 .lb-slide .lb-pill{top:0.7rem;right:0.7rem;font-size:0.52rem}
+.lb-slide .lb-price{top:0.7rem;left:0.7rem;font-size:0.58rem;padding:0.26rem 0.6rem}
 .lbc-arrow{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:1px solid rgba(201,168,76,0.35);background:var(--black2);color:var(--gold);font-size:1.3rem;line-height:1;cursor:pointer;transition:border-color 0.3s;display:flex;align-items:center;justify-content:center}
 .lbc-arrow:hover{border-color:var(--gold)}
 .lb-carousel-status{grid-column:1/-1;padding:2rem;text-align:center;color:var(--text);font-size:0.8rem}
@@ -224,9 +235,12 @@ section{padding:6.5rem 5rem}
 .lightbox.show{display:flex}
 .lightbox-stage{max-width:88vw;max-height:80vh;display:flex;flex-direction:column;align-items:center;gap:1rem}
 .lightbox-stage img,.lightbox-stage video{max-width:88vw;max-height:74vh;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
-.lightbox-caption{text-align:center}
+.lightbox-caption{text-align:center;max-width:480px}
 .lightbox-caption h3{font-family:'Playfair Display',serif;font-style:italic;color:var(--chrome-ink);font-size:1.2rem}
 .lightbox-caption p{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);margin-top:0.2rem}
+.lightbox-price{font-family:'Cormorant Garamond',serif;font-style:normal;font-size:1.15rem;color:var(--gold-light);margin-top:0.6rem;letter-spacing:0.03em;text-transform:none}
+.lightbox-desc{font-family:'Montserrat',sans-serif;font-size:0.78rem;line-height:1.7;color:var(--chrome-body);letter-spacing:normal;text-transform:none;margin-top:0.6rem}
+.lightbox-order-btn{margin-top:1.2rem}
 .lightbox-close,.lightbox-prev,.lightbox-next{position:absolute;background:rgba(20,20,20,0.6);border:1px solid rgba(201,168,76,0.35);color:var(--gold);cursor:pointer;transition:border-color 0.3s;display:flex;align-items:center;justify-content:center}
 .lightbox-close:hover,.lightbox-prev:hover,.lightbox-next:hover{border-color:var(--gold)}
 .lightbox-close{top:1.5rem;right:1.5rem;width:42px;height:42px;border-radius:50%;font-size:1.4rem}
@@ -496,6 +510,25 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
     <button class="lbtab" onclick="filterLookbook('bridal', this)">Bridal</button>
     <button class="lbtab" onclick="filterLookbook('custom', this)">Custom Atelier</button>
     <button class="lbtab" onclick="filterLookbook('hair', this)">Luxury Hair</button>
+  </div>
+
+  <!-- Sort/filter toolbar — only shown once real product data has loaded
+       from the API (see initShopToolbar in the script below). Sorting a
+       handful of static fallback captions with no real prices wouldn't
+       mean anything, so it stays hidden until there's real inventory. -->
+  <div class="lb-toolbar r r2" id="shopToolbar">
+    <span class="lb-result-count" id="shopResultCount"></span>
+    <div class="lb-toolbar-controls">
+      <label class="lb-avail-toggle">
+        <input type="checkbox" id="shopAvailableOnly"> Available to Order Only
+      </label>
+      <select class="lb-sort-select" id="shopSort">
+        <option value="featured">Sort: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name: A&ndash;Z</option>
+      </select>
+    </div>
   </div>
 
   <!-- "All" tab: auto-populated on load from however many image1, image2...
@@ -1021,6 +1054,18 @@ const lbCarouselPrevBtn = document.getElementById('lbCarouselPrev');
 const lbCarouselNextBtn = document.getElementById('lbCarouselNext');
 let carouselItems = [];
 
+function priceBadgeHtml(item) {
+  if (!item.is_purchasable) return '<span class="lb-price bespoke">Bespoke</span>';
+  if (item.stock_status === 'sold_out') return '<span class="lb-price sold-out">Sold Out</span>';
+  const amount = item.price != null ? (item.currency + ' ' + Number(item.price).toLocaleString()) : 'Price on Request';
+  return '<span class="lb-price">' + amount + '</span>';
+}
+
+function stockLineHtml(item) {
+  if (!item.is_purchasable || item.stock_status === 'sold_out') return '';
+  return '<span class="stock-line">' + (item.stock_status === 'in_stock' ? 'In Stock' : 'Made to Order') + '</span>';
+}
+
 function renderCarousel(items) {
   if (!items.length) {
     lbCarousel.innerHTML = '<p class="lb-carousel-status">No photos yet — add image1.jpg (etc.) to the project folder.</p>';
@@ -1030,7 +1075,8 @@ function renderCarousel(items) {
     const media = item.type === 'video'
       ? '<video src="' + item.src + '" muted playsinline preload="metadata"></video><span class="lbc-play">&#9658;</span>'
       : '<img src="' + item.src + '" alt="Lookbook photo ' + (i + 1) + '" loading="lazy">';
-    return '<div class="lb-slide" data-index="' + i + '">' + media + '</div>';
+    const priceHtml = item.product ? priceBadgeHtml(item.product) : '';
+    return '<div class="lb-slide" data-index="' + i + '">' + media + priceHtml + '</div>';
   }).join('');
 
   lbCarousel.querySelectorAll('.lb-slide').forEach(function (el) {
@@ -1065,29 +1111,46 @@ document.querySelectorAll('#lookGrid .lb-card').forEach(function (card, i) {
   card.addEventListener('click', function () { openLightbox(curatedItems, i); });
 });
 
-// -- If the API has products, replace the curated grid + carousel with
-//    them; otherwise the static cards above and the file-probing
-//    carousel below are left exactly as they were. Products are
-//    images only in this schema (no video field), so type is always
-//    'image' here — the "All" carousel's file-probed videos still
-//    show up whenever the API is empty.
-//
-//    Purchasable, in-stock products get a price badge and an "Order
-//    This" button (wired to the order modal below); everything else
-//    (bridal/custom/showcase-only pieces) gets a "Bespoke" badge and
-//    no order button, same as the static fallback cards. --
-function priceBadgeHtml(item) {
-  if (!item.is_purchasable) return '<span class="lb-price bespoke">Bespoke</span>';
-  if (item.stock_status === 'sold_out') return '<span class="lb-price sold-out">Sold Out</span>';
-  const amount = item.price != null ? (item.currency + ' ' + Number(item.price).toLocaleString()) : 'Price on Request';
-  return '<span class="lb-price">' + amount + '</span>';
+// -- Once real products load from the API, everything below drives the
+//    "browse and select" experience: category filtering (shared with
+//    the tabs above), a sort + availability toolbar, and a Quick View
+//    (via the lightbox) with full product details, on top of the
+//    direct "Order This" shortcut. Until the API responds, the static
+//    cards/carousel above are left exactly as they were — nothing here
+//    can break the page if the backend is unreachable. Products are
+//    images only in this schema (no video field), so the carousel's
+//    file-probed videos still show up whenever the API is empty. --
+let allProducts = [];
+let currentShopCategory = 'all';
+let currentShopSort = 'featured';
+let shopAvailableOnly = false;
+
+function getShopList(categorySlug) {
+  let list = allProducts.slice();
+  if (categorySlug && categorySlug !== 'all') {
+    list = list.filter(function (p) { return p.category_slug === categorySlug; });
+  }
+  if (shopAvailableOnly) {
+    list = list.filter(function (p) { return p.is_purchasable && p.stock_status !== 'sold_out'; });
+  }
+  if (currentShopSort === 'price-asc') {
+    list.sort(function (a, b) { return (a.price != null ? +a.price : Infinity) - (b.price != null ? +b.price : Infinity); });
+  } else if (currentShopSort === 'price-desc') {
+    list.sort(function (a, b) { return (b.price != null ? +b.price : -Infinity) - (a.price != null ? +a.price : -Infinity); });
+  } else if (currentShopSort === 'name') {
+    list.sort(function (a, b) { return a.title.localeCompare(b.title); });
+  }
+  return list;
 }
 
-apiFetch('/api/products').then(function (items) {
-  if (!items || !items.length) return;
-
+function renderProductGrid(list) {
   const grid = document.getElementById('lookGrid');
-  grid.innerHTML = items.map(function (item, i) {
+  if (!list.length) {
+    grid.innerHTML = '<p class="lb-carousel-status">No pieces match right now — try a different filter.</p>';
+    curatedItems.length = 0;
+    return;
+  }
+  grid.innerHTML = list.map(function (item, i) {
     const layoutClass = item.is_featured ? ' wide' : '';
     const canOrder = item.is_purchasable && item.stock_status !== 'sold_out';
     const orderBtnHtml = canOrder ? '<button type="button" class="lb-order-btn" data-index="' + i + '">Order This</button>' : '';
@@ -1095,31 +1158,60 @@ apiFetch('/api/products').then(function (items) {
       '<img src="' + item.image_url + '" alt="' + (item.title || '') + '">' +
       priceBadgeHtml(item) +
       '<span class="lb-pill">Look ' + String(i + 1).padStart(2, '0') + '</span>' +
-      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + '</p>' + orderBtnHtml + '</div>' +
+      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + stockLineHtml(item) + '</p>' + orderBtnHtml + '</div>' +
       '</div>';
   }).join('');
 
   curatedItems.length = 0;
   Array.from(grid.querySelectorAll('.lb-card')).forEach(function (card, i) {
     const img = card.querySelector('img');
-    const title = card.querySelector('.lb-card-info h3');
-    const label = card.querySelector('.lb-card-info p');
-    curatedItems.push({ type: 'image', src: img.getAttribute('src'), title: title.textContent, label: label.textContent });
+    curatedItems.push({ type: 'image', src: img.getAttribute('src'), title: list[i].title || '', label: list[i].category_name || '', product: list[i] });
     card.addEventListener('click', function () { openLightbox(curatedItems, i); });
 
     const orderBtn = card.querySelector('.lb-order-btn');
     if (orderBtn) {
       orderBtn.addEventListener('click', function (e) {
         e.stopPropagation();
-        openOrderModal(items[i]);
+        openOrderModal(list[i]);
       });
     }
   });
+}
 
-  carouselItems = items.map(function (item) {
-    return { type: 'image', src: item.image_url, title: item.title || '', label: item.category_name || '' };
+function renderProductCarousel(list) {
+  carouselItems = list.map(function (item) {
+    return { type: 'image', src: item.image_url, title: item.title || '', label: item.category_name || '', product: item };
   });
   renderCarousel(carouselItems);
+}
+
+function refreshShopView() {
+  const list = getShopList(currentShopCategory);
+  const countEl = document.getElementById('shopResultCount');
+  if (countEl) countEl.textContent = list.length + (list.length === 1 ? ' piece' : ' pieces');
+
+  if (currentShopCategory === 'all') {
+    renderProductCarousel(list);
+  } else {
+    renderProductGrid(list);
+  }
+}
+
+apiFetch('/api/products').then(function (items) {
+  if (!items || !items.length) return;
+
+  allProducts = items;
+  document.getElementById('shopToolbar').classList.add('active');
+  document.getElementById('shopSort').addEventListener('change', function (e) {
+    currentShopSort = e.target.value;
+    refreshShopView();
+  });
+  document.getElementById('shopAvailableOnly').addEventListener('change', function (e) {
+    shopAvailableOnly = e.target.checked;
+    refreshShopView();
+  });
+
+  refreshShopView();
 });
 
 // ── LIGHTBOX: opens for any Lookbook photo or video ──
@@ -1137,13 +1229,39 @@ function renderLightboxStage() {
   const mediaHtml = item.type === 'video'
     ? '<video src="' + item.src + '" controls autoplay playsinline></video>'
     : '<img src="' + item.src + '" alt="' + (item.title || 'Lookbook photo') + '">';
-  const captionHtml = (item.title || item.label)
-    ? '<div class="lightbox-caption">' +
-        (item.title ? '<h3>' + item.title + '</h3>' : '') +
-        (item.label ? '<p>' + item.label + '</p>' : '') +
-      '</div>'
-    : '';
+
+  // Items carrying a real product (see renderProductGrid/renderProductCarousel)
+  // get the fuller Quick View treatment; plain file-probed photos/videos just
+  // show the simple caption, same as before.
+  const product = item.product;
+  let captionHtml = '';
+  if (product) {
+    const priceLine = !product.is_purchasable
+      ? 'Bespoke — made to measure'
+      : (product.stock_status === 'sold_out' ? 'Sold Out' : (product.price != null ? (product.currency + ' ' + Number(product.price).toLocaleString()) : 'Price on Request'));
+    const canOrder = product.is_purchasable && product.stock_status !== 'sold_out';
+    captionHtml = '<div class="lightbox-caption">' +
+      (item.title ? '<h3>' + item.title + '</h3>' : '') +
+      (item.label ? '<p>' + item.label + '</p>' : '') +
+      '<p class="lightbox-price">' + priceLine + '</p>' +
+      (product.description ? '<p class="lightbox-desc">' + product.description + '</p>' : '') +
+      (canOrder ? '<button type="button" class="btn-gold lightbox-order-btn">Order This</button>' : '') +
+      '</div>';
+  } else if (item.title || item.label) {
+    captionHtml = '<div class="lightbox-caption">' +
+      (item.title ? '<h3>' + item.title + '</h3>' : '') +
+      (item.label ? '<p>' + item.label + '</p>' : '') +
+      '</div>';
+  }
   lightboxStage.innerHTML = mediaHtml + captionHtml;
+
+  const orderBtnEl = lightboxStage.querySelector('.lightbox-order-btn');
+  if (orderBtnEl) {
+    orderBtnEl.addEventListener('click', function () {
+      closeLightbox();
+      openOrderModal(product);
+    });
+  }
 }
 
 function openLightbox(set, index) {
@@ -1267,6 +1385,7 @@ function filterLookbook(category, btnEl) {
     document.getElementById('lookbook').scrollIntoView({ behavior: 'smooth' });
   }
 
+  currentShopCategory = category;
   const grid = document.getElementById('lookGrid');
   const carousel = document.getElementById('lbCarouselWrap');
 
@@ -1277,8 +1396,17 @@ function filterLookbook(category, btnEl) {
   } else {
     grid.classList.remove('lb-hidden');
     carousel.classList.remove('active');
-    document.querySelectorAll('.lb-card').forEach(card => {
-      card.classList.toggle('lb-hidden', card.dataset.category !== category);
+  }
+
+  if (allProducts.length) {
+    // Real product data: re-render from scratch with the current
+    // category + sort + availability filter applied.
+    refreshShopView();
+  } else {
+    // Static fallback: nothing dynamic to re-render, just toggle
+    // visibility of the pre-rendered curated cards.
+    document.querySelectorAll('#lookGrid .lb-card').forEach(card => {
+      card.classList.toggle('lb-hidden', category !== 'all' && card.dataset.category !== category);
     });
   }
 }
