@@ -201,8 +201,19 @@ section{padding:6.5rem 5rem}
 .lb-sort-select:focus{outline:none;border-color:var(--gold)}
 .lb-sort-select option{background:var(--black2);color:var(--white)}
 .lb-card-info .stock-line{display:block;margin-top:0.15rem;font-size:0.58rem;letter-spacing:0.1em;color:var(--text);text-transform:uppercase;opacity:0.85}
-.lb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.lb-card{position:relative;overflow:hidden;cursor:pointer;height:340px;box-shadow:0 14px 40px rgba(0,0,0,0.28);transition:transform 0.55s cubic-bezier(0.16,1,0.3,1),box-shadow 0.55s cubic-bezier(0.16,1,0.3,1)}
+/* Shop grid — laid out in fixed rows (3 deep on desktop) that flow
+   sideways: browsing feels like a carousel (scroll to see more), but
+   3 pieces are visible at once per column instead of being boxed into
+   one cramped strip. */
+.lb-grid-wrap{position:relative;display:flex;align-items:center;gap:0.9rem}
+.lb-grid-wrap .lb-grid{flex:1;min-width:0}
+.lb-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(3,330px);grid-auto-columns:280px;gap:18px;overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;padding-bottom:14px}
+.lb-grid::-webkit-scrollbar{height:6px}
+.lb-grid::-webkit-scrollbar-track{background:rgba(255,255,255,0.05)}
+.lb-grid::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.35)}
+.lbc-arrow{flex-shrink:0;width:46px;height:46px;border-radius:50%;border:1px solid rgba(201,168,76,0.35);background:var(--black2);color:var(--gold);font-size:1.3rem;line-height:1;cursor:pointer;transition:border-color 0.3s,background 0.3s,color 0.3s,transform 0.3s;display:flex;align-items:center;justify-content:center}
+.lbc-arrow:hover{border-color:var(--gold);background:var(--gold);color:var(--ink-on-gold);transform:scale(1.08)}
+.lb-card{position:relative;overflow:hidden;cursor:pointer;height:100%;scroll-snap-align:start;box-shadow:0 14px 40px rgba(0,0,0,0.28);transition:transform 0.55s cubic-bezier(0.16,1,0.3,1),box-shadow 0.55s cubic-bezier(0.16,1,0.3,1)}
 .lb-card:hover{transform:translateY(-8px);box-shadow:0 34px 70px rgba(0,0,0,0.45),0 0 0 1px rgba(201,168,76,0.3);z-index:3}
 .lb-card.wide{grid-column:span 2}
 .lb-card.tall{grid-row:span 2;height:100%}
@@ -237,7 +248,7 @@ section{padding:6.5rem 5rem}
 .lb-card video{width:100%;height:100%;object-fit:cover;filter:brightness(0.85) saturate(1.05);transition:transform 0.9s cubic-bezier(0.16,1,0.3,1),filter 0.6s ease;pointer-events:none}
 .lb-card:hover video{transform:scale(1.1);filter:brightness(1) saturate(1.15)}
 .lb-card .lbc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(8,8,8,0.55);border:1px solid var(--gold);color:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:0.95rem;pointer-events:none;z-index:2}
-.lb-carousel-status{grid-column:1/-1;padding:2rem;text-align:center;color:var(--text);font-size:0.8rem}
+.lb-carousel-status{grid-row:1/-1;padding:2rem;text-align:center;color:var(--text);font-size:0.8rem;display:flex;align-items:center;justify-content:center;min-width:60vw}
 
 /* Lightbox — opens for any lookbook photo (or video), from either the
    All-tab carousel or a category grid. */
@@ -355,8 +366,7 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
   .stats-strip{padding:3rem 2rem}
   .about-layout{grid-template-columns:1fr}
   .about-visual{display:none}
-  .lb-grid{grid-template-columns:1fr 1fr}
-  .lb-card.wide{grid-column:span 2}
+  .lb-grid{grid-template-rows:repeat(3,260px);grid-auto-columns:220px}
   .contact-layout{grid-template-columns:1fr;gap:3rem}
   .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem}
   .nav-links{display:none}
@@ -366,9 +376,8 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
 @media(max-width:700px){
   .hero-h1{font-size:2.7rem}
   .stats-strip{grid-template-columns:1fr 1fr;gap:2rem}
-  .lb-grid{grid-template-columns:1fr}
-  .lb-card.wide{grid-column:span 1}
-  .lb-card.tall{grid-row:span 1;height:300px}
+  .lb-grid{grid-template-rows:repeat(2,220px);grid-auto-columns:190px;gap:12px}
+  .lbc-arrow{display:none}
   .footer-top{grid-template-columns:1fr}
   .footer-bottom{flex-direction:column;gap:1rem;text-align:center}
   .lb-intro{flex-direction:column;align-items:flex-start}
@@ -557,11 +566,15 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
     </div>
   </div>
 
-  <!-- Shop grid: every tab, including "All", renders into this one
-       spacious grid — auto-populated on load from real products (or,
-       if the API is unreachable, however many image1, image2...
-       files exist). Click any photo to view it larger. -->
-  <div class="lb-grid r r3" id="lookGrid">
+  <!-- Shop grid: every tab, including "All", renders into this one grid
+       — auto-populated on load from real products (or, if the API is
+       unreachable, however many image1, image2... files exist). Fixed
+       at 3 rows deep and scrolls sideways, carousel-style, so several
+       rows are visible at once instead of one cramped strip. Click any
+       photo to view it larger. -->
+  <div class="lb-grid-wrap r r3">
+    <button class="lbc-arrow" id="shopGridPrev" aria-label="Scroll left">‹</button>
+    <div class="lb-grid" id="lookGrid">
     <div class="lb-card wide" data-category="fashion">
       <img src="image1.jpg" alt="Look 01 — Ready-to-Wear">
       <span class="lb-price bespoke">Bespoke</span>
@@ -610,6 +623,8 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
       <span class="lb-pill">Look 08</span>
       <div class="lb-card-info"><h3>Soie Dorée</h3><p>Custom Atelier</p></div>
     </div>
+    </div>
+    <button class="lbc-arrow" id="shopGridNext" aria-label="Scroll right">›</button>
   </div>
 </section>
 
@@ -1099,6 +1114,14 @@ function stockLineHtml(item) {
   if (!item.is_purchasable || item.stock_status === 'sold_out') return '';
   return '<span class="stock-line">' + (item.stock_status === 'in_stock' ? 'In Stock' : 'Made to Order') + '</span>';
 }
+
+// Grid scrolls sideways (3 rows deep, see .lb-grid) — these just give
+// desktop visitors a click target instead of relying on trackpad/drag.
+const shopGridPrevBtn = document.getElementById('shopGridPrev');
+const shopGridNextBtn = document.getElementById('shopGridNext');
+const lookGridEl = document.getElementById('lookGrid');
+if (shopGridPrevBtn) shopGridPrevBtn.addEventListener('click', () => lookGridEl.scrollBy({ left: -600, behavior: 'smooth' }));
+if (shopGridNextBtn) shopGridNextBtn.addEventListener('click', () => lookGridEl.scrollBy({ left: 600, behavior: 'smooth' }));
 
 // Single renderer for the whole grid — real products, the curated
 // fallback, and auto-discovered photos/videos all flow through here,
