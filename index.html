@@ -421,7 +421,7 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
     <div class="about-visual r">
       <div class="av-main" style="background-image:url('image2.jpg')"></div>
       <div class="av-sec" style="background-image:url('image3.jpg')"></div>
-      <div class="av-badge"><strong>5+</strong><span>Years Crafting</span></div>
+      <div class="av-badge"><strong data-setting="stats_years">5+</strong><span>Years Crafting</span></div>
     </div>
     <div class="about-body">
       <div class="sec-label r">The Designer</div>
@@ -430,9 +430,9 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
       <blockquote class="pull-quote r r3">"I don't just dress a client. I finish the whole look — from the hem to the hairline."</blockquote>
       <p class="r r3">Today the atelier produces considered fashion collections alongside bespoke bridal work and a curated line of luxury ladies' hair — wigs, extensions, and closures sourced for texture, density, and durability. Fittings and installs are done in person, by appointment.</p>
       <div class="about-stats r r4">
-        <div class="stat"><span class="stat-n">200+</span><span class="stat-l">Clients Styled</span></div>
-        <div class="stat"><span class="stat-n">24</span><span class="stat-l">Collections</span></div>
-        <div class="stat"><span class="stat-n">2</span><span class="stat-l">Product Lines</span></div>
+        <div class="stat"><span class="stat-n" data-setting="stats_clients">200+</span><span class="stat-l">Clients Styled</span></div>
+        <div class="stat"><span class="stat-n" data-setting="stats_collections">24</span><span class="stat-l">Collections</span></div>
+        <div class="stat"><span class="stat-n" data-setting="stats_product_lines">2</span><span class="stat-l">Product Lines</span></div>
       </div>
     </div>
   </div>
@@ -533,10 +533,10 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
 
 <!-- STATS STRIP -->
 <div class="stats-strip">
-  <div class="stat"><span class="stat-n">200+</span><span class="stat-l">Clients Styled</span></div>
-  <div class="stat"><span class="stat-n">24</span><span class="stat-l">Collections</span></div>
-  <div class="stat"><span class="stat-n">5+</span><span class="stat-l">Years Crafting</span></div>
-  <div class="stat"><span class="stat-n">2</span><span class="stat-l">Product Lines</span></div>
+  <div class="stat"><span class="stat-n" data-setting="stats_clients">200+</span><span class="stat-l">Clients Styled</span></div>
+  <div class="stat"><span class="stat-n" data-setting="stats_collections">24</span><span class="stat-l">Collections</span></div>
+  <div class="stat"><span class="stat-n" data-setting="stats_years">5+</span><span class="stat-l">Years Crafting</span></div>
+  <div class="stat"><span class="stat-n" data-setting="stats_product_lines">2</span><span class="stat-l">Product Lines</span></div>
 </div>
 
 <!-- CTA BANNER -->
@@ -600,7 +600,7 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
       </div>
       <div class="form-field">
         <label for="bc-phone">Phone</label>
-        <input type="tel" id="bc-phone" name="Phone">
+        <input type="tel" id="bc-phone" name="Phone" required>
       </div>
       <div class="form-field">
         <label for="bc-interest">Interested In</label>
@@ -716,6 +716,35 @@ const obs = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
 }, {threshold:0.07, rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.r').forEach(el => obs.observe(el));
+
+// ── BACKEND INTEGRATION (progressive enhancement) ──
+// Update API_BASE_URL once the FastAPI backend (see /backend) is deployed
+// somewhere reachable. Until then — or any time a request fails — every
+// apiFetch() call below resolves to null and every feature it feeds
+// silently keeps using the static content already in this file. Nothing
+// here can break the live site just because the backend isn't running.
+const API_BASE_URL = 'http://localhost:8000';
+
+function apiFetch(path) {
+  const options = {};
+  if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) {
+    options.signal = AbortSignal.timeout(4000);
+  }
+  return fetch(API_BASE_URL + path, options)
+    .then(function (res) { return res.ok ? res.json() : Promise.reject(); })
+    .catch(function () { return null; });
+}
+
+// -- Site settings: override stat numbers if the API has them --
+apiFetch('/api/settings').then(function (settings) {
+  if (!settings) return;
+  settings.forEach(function (s) {
+    if (!s.value) return;
+    document.querySelectorAll('[data-setting="' + s.key + '"]').forEach(function (el) {
+      el.textContent = s.value;
+    });
+  });
+});
 
 // ── HERO REEL: auto-detects however many videos/photos exist ──
 // No list to edit anymore — just follow the naming convention below
@@ -861,8 +890,24 @@ function startPhotoFallback(photoList) {
   }, 6000);
 }
 
-// -- Boot: figure out what's actually there, then start the right mode --
+// -- Boot: try the API first, then figure out what's actually there --
 (async function initHeroMedia() {
+  const apiMedia = await apiFetch('/api/hero-media');
+  if (apiMedia && apiMedia.length) {
+    const apiVideos = apiMedia.filter(function (m) { return m.media_type === 'video'; }).map(function (m) { return m.media_url; });
+    const apiPhotos = apiMedia.filter(function (m) { return m.media_type === 'photo'; }).map(function (m) { return m.media_url; });
+    if (apiVideos.length) {
+      videoList = apiVideos;
+      videoOrder = shuffled(videoList);
+      playVideoAt(0);
+      return;
+    }
+    if (apiPhotos.length) {
+      startPhotoFallback(apiPhotos);
+      return;
+    }
+  }
+
   videoList = await discoverVideos();
   if (videoList.length > 0) {
     videoOrder = shuffled(videoList);
@@ -949,6 +994,40 @@ const curatedItems = Array.from(document.querySelectorAll('#lookGrid .lb-card'))
 });
 document.querySelectorAll('#lookGrid .lb-card').forEach(function (card, i) {
   card.addEventListener('click', function () { openLightbox(curatedItems, i); });
+});
+
+// -- If the API has products, replace the curated grid + carousel with
+//    them; otherwise the static cards above and the file-probing
+//    carousel below are left exactly as they were. Products are
+//    images only in this schema (no video field), so type is always
+//    'image' here — the "All" carousel's file-probed videos still
+//    show up whenever the API is empty. --
+apiFetch('/api/products').then(function (items) {
+  if (!items || !items.length) return;
+
+  const grid = document.getElementById('lookGrid');
+  grid.innerHTML = items.map(function (item, i) {
+    const layoutClass = item.is_featured ? ' wide' : '';
+    return '<div class="lb-card' + layoutClass + '" data-category="' + (item.category_slug || '') + '">' +
+      '<img src="' + item.image_url + '" alt="' + (item.title || '') + '">' +
+      '<span class="lb-pill">Look ' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + '</p></div>' +
+      '</div>';
+  }).join('');
+
+  curatedItems.length = 0;
+  Array.from(grid.querySelectorAll('.lb-card')).forEach(function (card, i) {
+    const img = card.querySelector('img');
+    const title = card.querySelector('.lb-card-info h3');
+    const label = card.querySelector('.lb-card-info p');
+    curatedItems.push({ type: 'image', src: img.getAttribute('src'), title: title.textContent, label: label.textContent });
+    card.addEventListener('click', function () { openLightbox(curatedItems, i); });
+  });
+
+  carouselItems = items.map(function (item) {
+    return { type: 'image', src: item.image_url, title: item.title || '', label: item.category_name || '' };
+  });
+  renderCarousel(carouselItems);
 });
 
 // ── LIGHTBOX: opens for any Lookbook photo or video ──
@@ -1056,25 +1135,54 @@ function bcSendBooking(event) {
   btn.disabled = true;
   btn.textContent = 'Sending…';
 
-  fetch('https://formspree.io/f/xzdnyora', {
+  const formspreeRequest = fetch('https://formspree.io/f/xzdnyora', {
     method: 'POST',
     headers: { 'Accept': 'application/json' },
     body: fd
   }).then(function (response) {
-    if (response.ok) {
+    if (!response.ok) throw new Error('Formspree responded with an error');
+  });
+
+  // Also store the request in the database, if the backend is reachable —
+  // this is what makes it show up in /admin. It's sent alongside Formspree
+  // rather than instead of it, so submissions still succeed (and you still
+  // get the email) even before the backend is deployed anywhere. The
+  // "Interested In" dropdown's values match service_types.name exactly
+  // (see the seed data in backend/supabase/migrations/0001_init.sql), so
+  // service_typesById resolves it to the matching service_type_id.
+  const interestValue = document.getElementById('bc-interest').value;
+  const apiRequest = apiFetch('/api/service-types').then(function (serviceTypes) {
+    const match = serviceTypes && serviceTypes.find(function (t) { return t.name === interestValue; });
+    return fetch(API_BASE_URL + '/api/consultations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        full_name: document.getElementById('bc-fname').value,
+        email: document.getElementById('bc-email').value,
+        phone: document.getElementById('bc-phone').value || '',
+        service_type_id: match ? match.id : null,
+        preferred_date: document.getElementById('bc-date').value || null,
+        design_requirements: document.getElementById('bc-message').value
+      })
+    });
+  }).then(function (response) {
+    if (!response.ok) throw new Error('API responded with an error');
+  });
+
+  Promise.allSettled([formspreeRequest, apiRequest]).then(function (results) {
+    const anySucceeded = results.some(function (r) { return r.status === 'fulfilled'; });
+    if (anySucceeded) {
       form.reset();
       status.textContent = 'Thank you — your request has been sent. We\'ll be in touch within two business days.';
       status.classList.add('show');
       btn.textContent = 'Sent ✓';
       setTimeout(function () { btn.textContent = originalText; btn.disabled = false; }, 2500);
     } else {
-      throw new Error('Formspree responded with an error');
+      status.textContent = 'Something went wrong sending your request. Please try again, or reach us directly by email or TikTok.';
+      status.classList.add('show', 'error');
+      btn.disabled = false;
+      btn.textContent = originalText;
     }
-  }).catch(function () {
-    status.textContent = 'Something went wrong sending your request. Please try again, or reach us directly by email or TikTok.';
-    status.classList.add('show', 'error');
-    btn.disabled = false;
-    btn.textContent = originalText;
   });
 }
 document.getElementById('bookingForm').addEventListener('submit', bcSendBooking);

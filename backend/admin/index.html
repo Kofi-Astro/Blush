@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blush Closet — Admin</title>
+<style>
+:root{--gold:#C9A84C;--black:#0A0A0A;--black2:#151515;--black3:#1E1E1E;--text:#B9B2A2;--white:#FAFAF5;--err:#e08a8a;--ok:#7fbf8a}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--black);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;min-height:100vh}
+a{color:var(--gold)}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit;background:var(--black3);border:1px solid #333;color:var(--white);padding:0.55rem 0.7rem;border-radius:4px;font-size:0.85rem}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+label{display:block;font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--gold);margin-bottom:0.35rem}
+.btn{background:var(--gold);color:#0A0A0A;border:none;padding:0.6rem 1.1rem;border-radius:4px;font-weight:600;font-size:0.8rem}
+.btn:hover{background:#dcb964}
+.btn.secondary{background:transparent;border:1px solid #444;color:var(--white)}
+.btn.secondary:hover{border-color:var(--gold);color:var(--gold)}
+.btn.danger{background:transparent;border:1px solid var(--err);color:var(--err)}
+.btn.danger:hover{background:var(--err);color:#1a0505}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* login */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-box{width:320px;background:var(--black2);border:1px solid #262626;border-radius:8px;padding:2rem}
+.login-box h1{font-size:1.1rem;color:var(--gold);margin-bottom:1.4rem;text-align:center}
+.login-box .field{margin-bottom:1rem}
+.login-box input{width:100%}
+#loginError{color:var(--err);font-size:0.8rem;margin-top:0.6rem;min-height:1em}
+
+/* shell */
+#app{display:none}
+.shell{display:flex;min-height:100vh}
+.sidebar{width:200px;background:var(--black2);border-right:1px solid #262626;padding:1.5rem 0;flex-shrink:0;position:relative}
+.sidebar h2{color:var(--gold);font-size:1rem;padding:0 1.4rem 1.4rem;border-bottom:1px solid #262626;margin-bottom:1rem}
+.sidebar nav button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text);padding:0.75rem 1.4rem;font-size:0.85rem}
+.sidebar nav button:hover{color:var(--white)}
+.sidebar nav button.active{color:var(--gold);background:var(--black3);border-left:2px solid var(--gold)}
+.sidebar .logout{position:absolute;bottom:1.5rem;left:1.4rem}
+main{flex:1;padding:2rem 2.5rem;overflow-x:auto}
+main h1{font-size:1.3rem;margin-bottom:1.4rem;color:var(--gold)}
+.panel{display:none}
+.panel.active{display:block}
+
+table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:0.82rem}
+th,td{padding:0.65rem 0.7rem;border-bottom:1px solid #232323;text-align:left;vertical-align:top}
+th{color:var(--gold);font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase}
+tr:hover td{background:#161616}
+.msg-cell{max-width:220px;white-space:pre-wrap}
+.pill{display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.03em;border:1px solid #444}
+.pill.new,.pill.pending{border-color:var(--gold);color:var(--gold)}
+.pill.confirmed,.pill.completed,.pill.ready,.pill.in_stock{border-color:var(--ok);color:var(--ok)}
+.pill.cancelled,.pill.sold_out{border-color:var(--err);color:var(--err)}
+.row-actions{display:flex;gap:0.4rem;flex-wrap:wrap}
+.row-actions select{font-size:0.75rem;padding:0.3rem 0.4rem}
+
+.card{background:var(--black2);border:1px solid #262626;border-radius:8px;padding:1.4rem;margin-bottom:1.5rem}
+.card h3{font-size:0.95rem;color:var(--gold);margin-bottom:1rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-grid .full{grid-column:1/-1}
+.form-grid textarea{width:100%;min-height:70px;resize:vertical}
+.form-grid input,.form-grid select{width:100%}
+.form-actions{margin-top:1rem;display:flex;gap:0.7rem}
+.status-line{font-size:0.8rem;margin-top:0.7rem;min-height:1.2em}
+.status-line.ok{color:var(--ok)}
+.status-line.err{color:var(--err)}
+.hint{font-size:0.72rem;color:#7a7566;margin-top:0.3rem}
+.empty{color:#7a7566;font-size:0.85rem;padding:1rem 0}
+.item-list{margin:0;padding-left:1.1rem}
+.item-list li{margin-bottom:0.2rem}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <form class="login-box" id="loginForm">
+    <h1>BLUSH CLOSET — ADMIN</h1>
+    <div class="field">
+      <label for="loginUsername">Username</label>
+      <input type="text" id="loginUsername" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" required autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn" style="width:100%">Log In</button>
+    <p id="loginError"></p>
+  </form>
+</div>
+
+<div id="app">
+  <div class="shell">
+    <div class="sidebar">
+      <h2>Blush Closet</h2>
+      <nav>
+        <button data-panel="consultations" class="active">Consultations</button>
+        <button data-panel="products">Products</button>
+        <button data-panel="orders">Orders</button>
+        <button data-panel="hero">Hero Media</button>
+        <button data-panel="settings">Site Settings</button>
+      </nav>
+      <button class="btn secondary logout" id="logoutBtn">Log Out</button>
+    </div>
+
+    <main>
+      <!-- CONSULTATIONS -->
+      <section class="panel active" id="panel-consultations">
+        <h1>Consultation Requests</h1>
+        <div id="consultationsTableWrap"><p class="empty">Loading…</p></div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section class="panel" id="panel-products">
+        <h1>Products</h1>
+        <div class="card">
+          <h3 id="productFormTitle">Add Product</h3>
+          <form id="productForm">
+            <input type="hidden" id="p-id">
+            <div class="form-grid">
+              <div><label>Title</label><input type="text" id="p-title" required></div>
+              <div><label>Category</label><select id="p-category" required></select></div>
+              <div><label>Price</label><input type="number" id="p-price" step="0.01" min="0" placeholder="Leave blank for POA"></div>
+              <div><label>Currency</label><input type="text" id="p-currency" value="GHS" maxlength="3"></div>
+              <div><label>Look Number</label><input type="number" id="p-look-number"></div>
+              <div><label>Display Order</label><input type="number" id="p-display-order" value="0"></div>
+              <div><label>Stock Status</label>
+                <select id="p-stock-status">
+                  <option value="made_to_order">Made to Order</option>
+                  <option value="in_stock">In Stock</option>
+                  <option value="sold_out">Sold Out</option>
+                </select>
+              </div>
+              <div><label>Purchasable</label>
+                <select id="p-purchasable"><option value="true">Yes</option><option value="false">No (lookbook only)</option></select>
+              </div>
+              <div><label>Featured</label>
+                <select id="p-featured"><option value="false">No</option><option value="true">Yes</option></select>
+              </div>
+              <div class="full"><label>Upload Image (or leave blank and paste a URL below)</label><input type="file" id="p-file" accept="image/*"></div>
+              <div class="full"><label>Image URL</label><input type="text" id="p-image-url" placeholder="https://..."></div>
+              <div class="full"><label>Description</label><textarea id="p-description"></textarea></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn" id="productSaveBtn">Save</button>
+              <button type="button" class="btn secondary" id="productCancelEdit" style="display:none">Cancel Edit</button>
+            </div>
+            <p class="status-line" id="productStatus"></p>
+          </form>
+        </div>
+        <div id="productsTableWrap"><p class="empty">Loading…</p></div>
+      </section>
+
+      <!-- ORDERS -->
+      <section class="panel" id="panel-orders">
+        <h1>Orders</h1>
+        <p class="hint" style="margin-bottom:1rem">These are order requests submitted from the site — no payment is collected yet, so treat status as your manual follow-up tracker.</p>
+        <div id="ordersTableWrap"><p class="empty">Loading…</p></div>
+      </section>
+
+      <!-- HERO MEDIA -->
+      <section class="panel" id="panel-hero">
+        <h1>Hero Media Rotation</h1>
+        <div class="card">
+          <h3>Add Hero Media</h3>
+          <form id="heroForm">
+            <div class="form-grid">
+              <div><label>Media Type</label>
+                <select id="hero-media-type"><option value="video">Video</option><option value="photo">Photo</option></select>
+              </div>
+              <div><label>Sort Order</label><input type="number" id="hero-sort-order" value="0"></div>
+              <div class="full"><label>Upload File (or leave blank and paste a URL below)</label><input type="file" id="hero-file" accept="image/*,video/*"></div>
+              <div class="full"><label>Media URL</label><input type="text" id="hero-media-url" placeholder="https://..."></div>
+            </div>
+            <div class="form-actions"><button type="submit" class="btn">Add</button></div>
+            <p class="status-line" id="heroStatus"></p>
+          </form>
+        </div>
+        <div id="heroTableWrap"><p class="empty">Loading…</p></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="panel" id="panel-settings">
+        <h1>Site Settings</h1>
+        <p class="hint" style="margin-bottom:1rem">These map to small pieces of copy on the live site (e.g. stat numbers). Add a new key here, then wire it into index.html's <code>data-setting</code> attributes when you're ready to use it.</p>
+        <div class="card">
+          <h3>Add / Update a Setting</h3>
+          <form id="settingForm">
+            <div class="form-grid">
+              <div><label>Key</label><input type="text" id="setting-key" placeholder="stats_clients" required></div>
+              <div><label>Value</label><input type="text" id="setting-value" placeholder="200+"></div>
+            </div>
+            <div class="form-actions"><button type="submit" class="btn">Save</button></div>
+            <p class="status-line" id="settingStatus"></p>
+          </form>
+        </div>
+        <div id="settingsTableWrap"><p class="empty">Loading…</p></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+const TOKEN_KEY = 'blush_admin_token';
+
+// When this page is served by FastAPI itself (mounted at /admin, e.g. during
+// local dev), leaving this as '' calls the API same-origin. Once this page
+// is deployed standalone (e.g. to admin.blushcloset.xyz on Cloudflare Pages,
+// separate from the backend), set this to the deployed backend's URL — and
+// make sure that origin is in the backend's ALLOWED_ORIGINS.
+const API_BASE_URL = '';
+
+function getToken() { return localStorage.getItem(TOKEN_KEY); }
+function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
+function clearToken() { localStorage.removeItem(TOKEN_KEY); }
+
+async function api(path, options) {
+  options = options || {};
+  const headers = options.headers || {};
+  const token = getToken();
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  if (options.json !== undefined) {
+    headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(options.json);
+  }
+  const res = await fetch(API_BASE_URL + path, { method: options.method || 'GET', headers, body: options.body });
+  if (res.status === 401) {
+    clearToken();
+    showLogin();
+    throw new Error('Session expired — please log in again.');
+  }
+  if (!res.ok) {
+    let detail = res.statusText;
+    try { detail = (await res.json()).detail || detail; } catch (e) {}
+    throw new Error(detail);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+function escapeHtml(str) {
+  return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadServiceTypes().then(loadConsultations);
+  loadCategories().then(loadProducts);
+  loadOrders();
+  loadHeroMedia();
+  loadSettings();
+}
+
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  try {
+    const data = await api('/api/auth/login', {
+      method: 'POST',
+      json: {
+        username: document.getElementById('loginUsername').value,
+        password: document.getElementById('loginPassword').value
+      }
+    });
+    setToken(data.access_token);
+    showApp();
+  } catch (err) {
+    errEl.textContent = 'Incorrect username or password.';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', function () {
+  clearToken();
+  showLogin();
+});
+
+// ── nav ──
+document.querySelectorAll('.sidebar nav button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.sidebar nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  });
+});
+
+async function uploadIfFile(fileInputEl, folder) {
+  const file = fileInputEl.files[0];
+  if (!file) return null;
+  const fd = new FormData();
+  fd.append('file', file);
+  const data = await api('/api/uploads/' + folder, { method: 'POST', body: fd });
+  return data.url;
+}
+
+// ── LOOKUP DATA ──
+let serviceTypesById = {};
+let categoriesById = {};
+
+async function loadServiceTypes() {
+  try {
+    const types = await api('/api/service-types');
+    serviceTypesById = {};
+    types.forEach(function (t) { serviceTypesById[t.id] = t.name; });
+  } catch (err) { /* consultations table will just show blank service names */ }
+}
+
+async function loadCategories() {
+  try {
+    const cats = await api('/api/categories');
+    categoriesById = {};
+    const select = document.getElementById('p-category');
+    select.innerHTML = cats.map(function (c) {
+      categoriesById[c.id] = c.name;
+      return '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>';
+    }).join('');
+  } catch (err) { /* product form category dropdown will just be empty */ }
+}
+
+// ── CONSULTATIONS ──
+async function loadConsultations() {
+  const wrap = document.getElementById('consultationsTableWrap');
+  try {
+    const items = await api('/api/consultations');
+    if (!items.length) { wrap.innerHTML = '<p class="empty">No consultation requests yet.</p>'; return; }
+    const statuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
+    wrap.innerHTML = '<table><thead><tr><th>Name</th><th>Contact</th><th>Service</th><th>Date</th><th>Requirements</th><th>Status</th><th></th></tr></thead><tbody>' +
+      items.map(function (c) {
+        return '<tr data-id="' + c.id + '">' +
+          '<td>' + escapeHtml(c.full_name) + '</td>' +
+          '<td>' + escapeHtml(c.email) + '<br>' + escapeHtml(c.phone) + '</td>' +
+          '<td>' + escapeHtml(serviceTypesById[c.service_type_id] || '—') + '</td>' +
+          '<td>' + escapeHtml(c.preferred_date || '—') + '</td>' +
+          '<td class="msg-cell">' + escapeHtml(c.design_requirements || '—') + '</td>' +
+          '<td><span class="pill ' + c.status + '">' + c.status + '</span></td>' +
+          '<td class="row-actions">' +
+            '<select class="consult-status-select">' + statuses.map(s => '<option value="' + s + '"' + (s === c.status ? ' selected' : '') + '>' + s + '</option>').join('') + '</select>' +
+            '<button class="btn danger consult-delete">Delete</button>' +
+          '</td></tr>';
+      }).join('') + '</tbody></table>';
+
+    wrap.querySelectorAll('tr[data-id]').forEach(function (row) {
+      const id = row.dataset.id;
+      row.querySelector('.consult-status-select').addEventListener('change', async function (e) {
+        await api('/api/consultations/' + id, { method: 'PATCH', json: { status: e.target.value } });
+        loadConsultations();
+      });
+      row.querySelector('.consult-delete').addEventListener('click', async function () {
+        if (!confirm('Delete this consultation request?')) return;
+        await api('/api/consultations/' + id, { method: 'DELETE' });
+        loadConsultations();
+      });
+    });
+  } catch (err) {
+    wrap.innerHTML = '<p class="empty">Failed to load: ' + escapeHtml(err.message) + '</p>';
+  }
+}
+
+// ── PRODUCTS ──
+async function loadProducts() {
+  const wrap = document.getElementById('productsTableWrap');
+  try {
+    const items = await api('/api/products');
+    if (!items.length) { wrap.innerHTML = '<p class="empty">No products yet.</p>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Order</th><th></th></tr></thead><tbody>' +
+      items.map(function (p) {
+        return '<tr data-id="' + p.id + '">' +
+          '<td>' + escapeHtml(p.title) + '<br><a href="' + escapeHtml(p.image_url) + '" target="_blank" style="font-size:0.75rem">view image</a></td>' +
+          '<td>' + escapeHtml(p.category_name || p.category_id) + '</td>' +
+          '<td>' + (p.price != null ? escapeHtml(p.currency + ' ' + p.price) : 'POA') + '</td>' +
+          '<td><span class="pill ' + p.stock_status + '">' + p.stock_status + '</span></td>' +
+          '<td>' + (p.is_featured ? 'Yes' : 'No') + '</td>' +
+          '<td>' + p.display_order + '</td>' +
+          '<td class="row-actions"><button class="btn secondary p-edit">Edit</button><button class="btn danger p-delete">Delete</button></td>' +
+          '</tr>';
+      }).join('') + '</tbody></table>';
+
+    wrap.querySelectorAll('tr[data-id]').forEach(function (row) {
+      const id = row.dataset.id;
+      const item = items.find(p => String(p.id) === id);
+      row.querySelector('.p-edit').addEventListener('click', function () { fillProductForm(item); });
+      row.querySelector('.p-delete').addEventListener('click', async function () {
+        if (!confirm('Delete "' + item.title + '"?')) return;
+        await api('/api/products/' + id, { method: 'DELETE' });
+        loadProducts();
+      });
+    });
+  } catch (err) {
+    wrap.innerHTML = '<p class="empty">Failed to load: ' + escapeHtml(err.message) + '</p>';
+  }
+}
+
+function fillProductForm(item) {
+  document.getElementById('productFormTitle').textContent = 'Edit Product';
+  document.getElementById('p-id').value = item.id;
+  document.getElementById('p-title').value = item.title;
+  document.getElementById('p-category').value = item.category_id;
+  document.getElementById('p-price').value = item.price != null ? item.price : '';
+  document.getElementById('p-currency').value = item.currency;
+  document.getElementById('p-look-number').value = item.look_number != null ? item.look_number : '';
+  document.getElementById('p-display-order').value = item.display_order;
+  document.getElementById('p-stock-status').value = item.stock_status;
+  document.getElementById('p-purchasable').value = String(item.is_purchasable);
+  document.getElementById('p-featured').value = String(item.is_featured);
+  document.getElementById('p-image-url').value = item.image_url;
+  document.getElementById('p-description').value = item.description || '';
+  document.getElementById('productCancelEdit').style.display = 'inline-block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetProductForm() {
+  document.getElementById('productForm').reset();
+  document.getElementById('p-id').value = '';
+  document.getElementById('p-currency').value = 'GHS';
+  document.getElementById('productFormTitle').textContent = 'Add Product';
+  document.getElementById('productCancelEdit').style.display = 'none';
+}
+
+document.getElementById('productCancelEdit').addEventListener('click', resetProductForm);
+
+document.getElementById('productForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const statusEl = document.getElementById('productStatus');
+  const saveBtn = document.getElementById('productSaveBtn');
+  statusEl.textContent = ''; statusEl.className = 'status-line';
+  saveBtn.disabled = true;
+  try {
+    const uploadedUrl = await uploadIfFile(document.getElementById('p-file'), 'products');
+    const imageUrl = uploadedUrl || document.getElementById('p-image-url').value.trim();
+    if (!imageUrl) throw new Error('Provide a file upload or an image URL.');
+
+    const priceRaw = document.getElementById('p-price').value;
+    const lookRaw = document.getElementById('p-look-number').value;
+
+    const payload = {
+      title: document.getElementById('p-title').value.trim(),
+      description: document.getElementById('p-description').value.trim() || null,
+      price: priceRaw === '' ? null : parseFloat(priceRaw),
+      currency: document.getElementById('p-currency').value.trim() || 'GHS',
+      image_url: imageUrl,
+      look_number: lookRaw === '' ? null : parseInt(lookRaw, 10),
+      category_id: parseInt(document.getElementById('p-category').value, 10),
+      is_purchasable: document.getElementById('p-purchasable').value === 'true',
+      is_featured: document.getElementById('p-featured').value === 'true',
+      stock_status: document.getElementById('p-stock-status').value,
+      display_order: parseInt(document.getElementById('p-display-order').value, 10) || 0
+    };
+
+    const id = document.getElementById('p-id').value;
+    if (id) {
+      await api('/api/products/' + id, { method: 'PUT', json: payload });
+    } else {
+      await api('/api/products', { method: 'POST', json: payload });
+    }
+    statusEl.textContent = 'Saved.'; statusEl.className = 'status-line ok';
+    resetProductForm();
+    loadProducts();
+  } catch (err) {
+    statusEl.textContent = err.message; statusEl.className = 'status-line err';
+  } finally {
+    saveBtn.disabled = false;
+  }
+});
+
+// ── ORDERS ──
+async function loadOrders() {
+  const wrap = document.getElementById('ordersTableWrap');
+  try {
+    const orders = await api('/api/orders');
+    if (!orders.length) { wrap.innerHTML = '<p class="empty">No orders yet.</p>'; return; }
+    const statuses = ['pending', 'confirmed', 'processing', 'ready', 'completed', 'cancelled'];
+    wrap.innerHTML = '<table><thead><tr><th>Customer</th><th>Items</th><th>Notes</th><th>Status</th><th></th></tr></thead><tbody>' +
+      orders.map(function (o) {
+        const itemsHtml = '<ul class="item-list">' + o.items.map(function (it) {
+          return '<li>' + it.quantity + '× ' + escapeHtml(it.product_title_snapshot) +
+            (it.price_at_order != null ? ' — ' + it.price_at_order : '') +
+            (it.notes ? ' (' + escapeHtml(it.notes) + ')' : '') + '</li>';
+        }).join('') + '</ul>';
+        return '<tr data-id="' + o.id + '">' +
+          '<td>' + escapeHtml(o.full_name) + '<br>' + escapeHtml(o.email) + '<br>' + escapeHtml(o.phone) + '</td>' +
+          '<td>' + itemsHtml + '</td>' +
+          '<td class="msg-cell">' + escapeHtml(o.delivery_notes || '—') + '</td>' +
+          '<td><span class="pill ' + o.status + '">' + o.status + '</span></td>' +
+          '<td class="row-actions">' +
+            '<select class="order-status-select">' + statuses.map(s => '<option value="' + s + '"' + (s === o.status ? ' selected' : '') + '>' + s + '</option>').join('') + '</select>' +
+            '<button class="btn danger order-delete">Delete</button>' +
+          '</td></tr>';
+      }).join('') + '</tbody></table>';
+
+    wrap.querySelectorAll('tr[data-id]').forEach(function (row) {
+      const id = row.dataset.id;
+      row.querySelector('.order-status-select').addEventListener('change', async function (e) {
+        await api('/api/orders/' + id, { method: 'PATCH', json: { status: e.target.value } });
+        loadOrders();
+      });
+      row.querySelector('.order-delete').addEventListener('click', async function () {
+        if (!confirm('Delete this order?')) return;
+        await api('/api/orders/' + id, { method: 'DELETE' });
+        loadOrders();
+      });
+    });
+  } catch (err) {
+    wrap.innerHTML = '<p class="empty">Failed to load: ' + escapeHtml(err.message) + '</p>';
+  }
+}
+
+// ── HERO MEDIA ──
+async function loadHeroMedia() {
+  const wrap = document.getElementById('heroTableWrap');
+  try {
+    const items = await api('/api/hero-media/all');
+    if (!items.length) { wrap.innerHTML = '<p class="empty">No hero media yet.</p>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>Type</th><th>Media</th><th>Order</th><th>Active</th><th></th></tr></thead><tbody>' +
+      items.map(function (i) {
+        return '<tr data-id="' + i.id + '">' +
+          '<td>' + escapeHtml(i.media_type) + '</td>' +
+          '<td><a href="' + escapeHtml(i.media_url) + '" target="_blank">view</a></td>' +
+          '<td>' + i.sort_order + '</td>' +
+          '<td>' + (i.is_active ? 'Yes' : 'No') + '</td>' +
+          '<td class="row-actions"><button class="btn secondary hero-toggle">' + (i.is_active ? 'Deactivate' : 'Activate') + '</button><button class="btn danger hero-delete">Delete</button></td>' +
+          '</tr>';
+      }).join('') + '</tbody></table>';
+
+    wrap.querySelectorAll('tr[data-id]').forEach(function (row) {
+      const id = row.dataset.id;
+      const item = items.find(i => String(i.id) === id);
+      row.querySelector('.hero-toggle').addEventListener('click', async function () {
+        await api('/api/hero-media/' + id, { method: 'PUT', json: Object.assign({}, item, { is_active: !item.is_active }) });
+        loadHeroMedia();
+      });
+      row.querySelector('.hero-delete').addEventListener('click', async function () {
+        if (!confirm('Delete this hero media?')) return;
+        await api('/api/hero-media/' + id, { method: 'DELETE' });
+        loadHeroMedia();
+      });
+    });
+  } catch (err) {
+    wrap.innerHTML = '<p class="empty">Failed to load: ' + escapeHtml(err.message) + '</p>';
+  }
+}
+
+document.getElementById('heroForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const statusEl = document.getElementById('heroStatus');
+  statusEl.textContent = ''; statusEl.className = 'status-line';
+  try {
+    const uploadedUrl = await uploadIfFile(document.getElementById('hero-file'), 'hero');
+    const mediaUrl = uploadedUrl || document.getElementById('hero-media-url').value.trim();
+    if (!mediaUrl) throw new Error('Provide a file upload or a media URL.');
+
+    await api('/api/hero-media', {
+      method: 'POST',
+      json: {
+        media_type: document.getElementById('hero-media-type').value,
+        media_url: mediaUrl,
+        sort_order: parseInt(document.getElementById('hero-sort-order').value, 10) || 0,
+        is_active: true
+      }
+    });
+    statusEl.textContent = 'Added.'; statusEl.className = 'status-line ok';
+    document.getElementById('heroForm').reset();
+    loadHeroMedia();
+  } catch (err) {
+    statusEl.textContent = err.message; statusEl.className = 'status-line err';
+  }
+});
+
+// ── SETTINGS ──
+async function loadSettings() {
+  const wrap = document.getElementById('settingsTableWrap');
+  try {
+    const settings = await api('/api/settings');
+    if (!settings.length) { wrap.innerHTML = '<p class="empty">No settings yet.</p>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>' +
+      settings.map(s => '<tr><td>' + escapeHtml(s.key) + '</td><td>' + escapeHtml(s.value) + '</td></tr>').join('') +
+      '</tbody></table>';
+  } catch (err) {
+    wrap.innerHTML = '<p class="empty">Failed to load: ' + escapeHtml(err.message) + '</p>';
+  }
+}
+
+document.getElementById('settingForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const statusEl = document.getElementById('settingStatus');
+  statusEl.textContent = ''; statusEl.className = 'status-line';
+  try {
+    const key = document.getElementById('setting-key').value.trim();
+    await api('/api/settings/' + encodeURIComponent(key), {
+      method: 'PUT',
+      json: { value: document.getElementById('setting-value').value }
+    });
+    statusEl.textContent = 'Saved.'; statusEl.className = 'status-line ok';
+    document.getElementById('settingForm').reset();
+    loadSettings();
+  } catch (err) {
+    statusEl.textContent = err.message; statusEl.className = 'status-line err';
+  }
+});
+
+// ── boot ──
+if (getToken()) { showApp(); } else { showLogin(); }
+</script>
+</body>
+</html>
