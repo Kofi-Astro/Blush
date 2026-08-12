@@ -43,6 +43,31 @@ main h1{font-size:1.3rem;margin-bottom:1.4rem;color:var(--gold)}
 .panel{display:none}
 .panel.active{display:block}
 
+/* mobile: the 200px sidebar was permanently eating half of a phone
+   screen. Below 860px it becomes an off-canvas drawer, opened by a
+   hamburger button in a small top bar, closed by the backdrop, the ×,
+   Escape, or picking a nav item. */
+.admin-topbar{display:none}
+.sidebar-close{display:none}
+.sidebar-backdrop{display:none}
+@media(max-width:860px){
+  .admin-topbar{display:flex;align-items:center;gap:0.9rem;padding:0.85rem 1.1rem;background:var(--black2);border-bottom:1px solid #262626;position:sticky;top:0;z-index:100}
+  .admin-topbar .hamburger-btn{display:flex;flex-direction:column;justify-content:center;gap:4px;width:32px;height:32px;background:none;border:1px solid #333;border-radius:4px;flex-shrink:0}
+  .admin-topbar .hamburger-btn span{display:block;width:16px;height:1.5px;background:var(--gold);margin:0 auto}
+  .admin-topbar-title{color:var(--gold);font-size:0.95rem;font-weight:600}
+  .shell{position:relative}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:210;transform:translateX(-100%);transition:transform 0.3s ease;box-shadow:4px 0 28px rgba(0,0,0,0.55)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar h2{display:flex;align-items:center;justify-content:space-between}
+  .sidebar-close{display:block;background:none;border:none;color:var(--text);font-size:1.4rem;line-height:1;cursor:pointer;padding:0 0.2rem}
+  .sidebar-close:hover{color:var(--gold)}
+  .sidebar-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:205;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+  .sidebar-backdrop.show{opacity:1;pointer-events:auto}
+  main{padding:1.4rem 1.1rem}
+  .form-grid{grid-template-columns:1fr}
+  table{min-width:640px}
+}
+
 table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:0.82rem}
 th,td{padding:0.65rem 0.7rem;border-bottom:1px solid #232323;text-align:left;vertical-align:top}
 th{color:var(--gold);font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase}
@@ -90,9 +115,14 @@ tr:hover td{background:#161616}
 </div>
 
 <div id="app">
+  <div class="admin-topbar">
+    <button class="hamburger-btn" id="sidebarOpen" aria-label="Open menu" type="button"><span></span><span></span><span></span></button>
+    <span class="admin-topbar-title">Blush Closet</span>
+  </div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <div class="shell">
-    <div class="sidebar">
-      <h2>Blush Closet</h2>
+    <div class="sidebar" id="adminSidebar">
+      <h2>Blush Closet<button class="sidebar-close" id="sidebarClose" aria-label="Close menu" type="button">&times;</button></h2>
       <nav>
         <button data-panel="consultations" class="active">Consultations</button>
         <button data-panel="products">Products</button>
@@ -289,8 +319,20 @@ document.querySelectorAll('.sidebar nav button').forEach(function (btn) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+    closeSidebar();
   });
 });
+
+// ── mobile sidebar drawer (no-op visually above the 860px breakpoint,
+//    since .open/.show only mean anything inside that media query) ──
+const adminSidebar = document.getElementById('adminSidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+function openSidebar() { adminSidebar.classList.add('open'); sidebarBackdrop.classList.add('show'); }
+function closeSidebar() { adminSidebar.classList.remove('open'); sidebarBackdrop.classList.remove('show'); }
+document.getElementById('sidebarOpen').addEventListener('click', openSidebar);
+document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+sidebarBackdrop.addEventListener('click', closeSidebar);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSidebar(); });
 
 async function uploadIfFile(fileInputEl, folder) {
   const file = fileInputEl.files[0];
