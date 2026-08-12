@@ -718,12 +718,11 @@ const obs = new IntersectionObserver((entries) => {
 document.querySelectorAll('.r').forEach(el => obs.observe(el));
 
 // ── BACKEND INTEGRATION (progressive enhancement) ──
-// Update API_BASE_URL once the FastAPI backend (see /backend) is deployed
-// somewhere reachable. Until then — or any time a request fails — every
-// apiFetch() call below resolves to null and every feature it feeds
+// Any time a request fails — e.g. the backend is redeployed elsewhere —
+// every apiFetch() call below resolves to null and every feature it feeds
 // silently keeps using the static content already in this file. Nothing
-// here can break the live site just because the backend isn't running.
-const API_BASE_URL = 'http://localhost:8000';
+// here can break the live site just because the backend is unreachable.
+const API_BASE_URL = 'https://blush-production.up.railway.app';
 
 function apiFetch(path) {
   const options = {};
