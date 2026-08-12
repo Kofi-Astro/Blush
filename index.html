@@ -225,44 +225,19 @@ section{padding:6.5rem 5rem}
 .lb-grid .lb-card:nth-child(7){animation-delay:0.39s}
 .lb-grid .lb-card:nth-child(n+8){animation-delay:0.45s}
 .lb-pill{position:absolute;top:1rem;right:1rem;background:rgba(8,8,8,0.65);border:1px solid var(--gold);color:var(--gold-light);font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:0.28rem 0.7rem;backdrop-filter:blur(3px)}
-.lb-hidden{display:none !important}
 .lb-price{position:absolute;top:1rem;left:1rem;background:var(--gold);color:var(--ink-on-gold);font-size:0.68rem;font-weight:700;letter-spacing:0.03em;padding:0.32rem 0.75rem;z-index:1}
 .lb-price.bespoke{background:rgba(8,8,8,0.65);border:1px solid var(--gold);color:var(--gold-light);font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase}
 .lb-price.sold-out{background:rgba(8,8,8,0.75);border:1px solid #a06060;color:#e08a8a;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase}
 .lb-order-btn{margin-top:0.6rem;background:var(--gold);color:var(--ink-on-gold);border:none;padding:0.5rem 1.1rem;font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background 0.3s}
 .lb-order-btn:hover{background:var(--gold-light)}
 
-/* All-tab carousel: auto-populated from however many image1, image2...
-   files actually exist, rather than a fixed curated set. */
-.lb-carousel-wrap{position:relative;display:none;align-items:center;gap:0.8rem}
-.lb-carousel-wrap.active{display:flex}
-.lb-carousel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding-bottom:8px}
-.lb-carousel::-webkit-scrollbar{height:5px}
-.lb-carousel::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.35)}
-.lb-slide{position:relative;flex:0 0 300px;height:400px;scroll-snap-align:start;overflow:hidden;cursor:pointer;background:var(--black3);box-shadow:0 14px 36px rgba(0,0,0,0.3);transition:transform 0.5s cubic-bezier(0.16,1,0.3,1),box-shadow 0.5s cubic-bezier(0.16,1,0.3,1)}
-.lb-slide:hover{transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,0.45)}
-.lb-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(0.85) saturate(1.05);transition:transform 0.8s cubic-bezier(0.16,1,0.3,1),filter 0.5s ease}
-.lb-slide:hover img{transform:scale(1.1);filter:brightness(1) saturate(1.15)}
-.lb-slide::after{content:'View';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) translateY(10px);font-family:'Montserrat',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-light);padding:0.75rem 1.4rem;border:1px solid rgba(232,201,122,0.55);background:rgba(8,8,8,0.4);backdrop-filter:blur(4px);opacity:0;transition:opacity 0.45s ease,transform 0.45s cubic-bezier(0.16,1,0.3,1);pointer-events:none;z-index:2}
-.lb-slide:hover::after{opacity:1;transform:translate(-50%,-50%) translateY(0)}
-@keyframes slideReveal{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-.lb-slide{animation:slideReveal 0.6s cubic-bezier(0.16,1,0.3,1) both}
-.lb-carousel .lb-slide:nth-child(1){animation-delay:0.03s}
-.lb-carousel .lb-slide:nth-child(2){animation-delay:0.08s}
-.lb-carousel .lb-slide:nth-child(3){animation-delay:0.13s}
-.lb-carousel .lb-slide:nth-child(4){animation-delay:0.18s}
-.lb-carousel .lb-slide:nth-child(5){animation-delay:0.23s}
-.lb-carousel .lb-slide:nth-child(n+6){animation-delay:0.28s}
-.lb-slide .lb-card-info{position:absolute;bottom:0;left:0;right:0;padding:1rem 1.1rem;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 100%)}
-.lb-slide .lb-card-info h3{font-family:'Playfair Display',serif;color:var(--chrome-ink);font-size:0.95rem;font-weight:700;margin-bottom:0.1rem}
-.lb-slide .lb-card-info p{font-size:0.58rem;letter-spacing:0.14em;color:var(--gold-light);text-transform:uppercase}
-.lb-slide .lb-pill{top:0.7rem;right:0.7rem;font-size:0.52rem}
-.lb-slide .lb-price{top:0.7rem;left:0.7rem;font-size:0.58rem;padding:0.26rem 0.6rem}
-.lbc-arrow{flex-shrink:0;width:46px;height:46px;border-radius:50%;border:1px solid rgba(201,168,76,0.35);background:var(--black2);color:var(--gold);font-size:1.3rem;line-height:1;cursor:pointer;transition:border-color 0.3s,background 0.3s,color 0.3s,transform 0.3s;display:flex;align-items:center;justify-content:center}
-.lbc-arrow:hover{border-color:var(--gold);background:var(--gold);color:var(--ink-on-gold);transform:scale(1.08)}
+/* Video cards inside the shop grid — auto-discovered look-video-N.mp4
+   files render here the same way photo cards do, just with a video
+   element and a centered play glyph instead of an <img>. */
+.lb-card video{width:100%;height:100%;object-fit:cover;filter:brightness(0.85) saturate(1.05);transition:transform 0.9s cubic-bezier(0.16,1,0.3,1),filter 0.6s ease;pointer-events:none}
+.lb-card:hover video{transform:scale(1.1);filter:brightness(1) saturate(1.15)}
+.lb-card .lbc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(8,8,8,0.55);border:1px solid var(--gold);color:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:0.95rem;pointer-events:none;z-index:2}
 .lb-carousel-status{grid-column:1/-1;padding:2rem;text-align:center;color:var(--text);font-size:0.8rem}
-.lb-slide video{width:100%;height:100%;object-fit:cover;filter:brightness(0.68) saturate(0.85);pointer-events:none}
-.lb-slide .lbc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(8,8,8,0.55);border:1px solid var(--gold);color:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:0.9rem;pointer-events:none}
 
 /* Lightbox — opens for any lookbook photo (or video), from either the
    All-tab carousel or a category grid. */
@@ -290,7 +265,6 @@ section{padding:6.5rem 5rem}
   .lightbox-prev,.lightbox-next{width:40px;height:40px;font-size:1.3rem}
   .lightbox-prev{left:0.6rem}
   .lightbox-next{right:0.6rem}
-  .lb-slide{flex-basis:230px;height:300px}
 }
 
 /* ── ORDER MODAL: opens from a product's "Order This" button ── */
@@ -402,6 +376,18 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
   .photo-strip{height:auto;flex-direction:column}
   .ps-panel{height:160px}
   .ps-panel:hover{flex:1}
+  /* Nav was wrapping onto 3-4 lines at phone widths (logo tagline +
+     the always-visible CTA + hamburger competing for the same row),
+     which made the fixed nav tall enough to cover the top of whatever
+     section was scrolled beneath it. Drop the tagline and shrink the
+     CTA so it stays a single compact bar. */
+  nav,nav.scrolled{padding:0.9rem 1.1rem}
+  .logo-wrap{gap:0.6rem}
+  .logo-emblem{width:36px;height:36px}
+  .logo-name{font-size:0.98rem}
+  .logo-sub{display:none}
+  .nav-cta{padding:0.5rem 0.85rem;font-size:0.54rem;letter-spacing:0.12em;white-space:nowrap}
+  .theme-toggle{width:32px;height:32px}
 }
 </style>
 </head>
@@ -571,18 +557,11 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
     </div>
   </div>
 
-  <!-- "All" tab: auto-populated on load from however many image1, image2...
-       files exist — browse it like a carousel rather than a fixed grid.
-       Click any photo to view it larger. -->
-  <div class="lb-carousel-wrap r r3 active" id="lbCarouselWrap">
-    <button class="lbc-arrow" id="lbCarouselPrev" aria-label="Scroll left">‹</button>
-    <div class="lb-carousel" id="lbCarousel">
-      <p class="lb-carousel-status">Loading the lookbook…</p>
-    </div>
-    <button class="lbc-arrow" id="lbCarouselNext" aria-label="Scroll right">›</button>
-  </div>
-
-  <div class="lb-grid r r3 lb-hidden" id="lookGrid">
+  <!-- Shop grid: every tab, including "All", renders into this one
+       spacious grid — auto-populated on load from real products (or,
+       if the API is unreachable, however many image1, image2...
+       files exist). Click any photo to view it larger. -->
+  <div class="lb-grid r r3" id="lookGrid">
     <div class="lb-card wide" data-category="fashion">
       <img src="image1.jpg" alt="Look 01 — Ready-to-Wear">
       <span class="lb-price bespoke">Bespoke</span>
@@ -1060,12 +1039,13 @@ function startPhotoFallback(photoList) {
   }
 })();
 
-// ── LOOKBOOK "ALL" CAROUSEL ──
+// ── SHOP GRID: every tab renders here, "All" included ──
 // Reuses the same image1, image2... probing as the hero fallback (any
-// of .jpg/.jpeg/.png/.webp), plus look-video-1, look-video-2...  for
+// of .jpg/.jpeg/.png/.webp), plus look-video-1, look-video-2... for
 // videos — auto-detected the same way, so it always shows exactly
-// however many files actually exist. This carousel only appears on
-// the "All" tab; the category tabs still show the curated grid below.
+// however many files actually exist. This is only the fallback for
+// when the API is unreachable; real product data (below) takes over
+// the moment it loads.
 const MAX_LOOKBOOK_PHOTOS = 700; // ceiling, not a target
 const LOOKBOOK_VIDEO_PREFIX = 'look-video-';
 const LOOKBOOK_VIDEO_EXT = '.mp4';
@@ -1089,12 +1069,26 @@ async function discoverLookbookVideos() {
   return results.filter(Boolean).map(src => ({ type: 'video', src: src, title: '', label: '' }));
 }
 
-const lbCarousel = document.getElementById('lbCarousel');
-const lbCarouselPrevBtn = document.getElementById('lbCarouselPrev');
-const lbCarouselNextBtn = document.getElementById('lbCarouselNext');
-let carouselItems = [];
+// Curated fallback — only used if the live API is unreachable, for the
+// category-specific tabs (the "All" tab uses the auto-discovered set
+// above instead, so it still shows everything in the project, not just
+// these highlights).
+const CURATED_FALLBACK = [
+  { image_url: 'image1.jpg', title: 'Ivory Column', category_slug: 'fashion', category_name: 'Ready-to-Wear', is_purchasable: false },
+  { image_url: 'image8.jpg', title: 'Gilded Veil', category_slug: 'bridal', category_name: 'Bridal', is_purchasable: false },
+  { image_url: 'image9.jpg', title: 'Bone Straight 26"', category_slug: 'hair', category_name: 'Luxury Hair', is_purchasable: false },
+  { image_url: 'image10.jpg', title: 'Draped Bronze', category_slug: 'custom', category_name: 'Custom Atelier', is_purchasable: false },
+  { image_url: 'image2.jpg', title: 'Noir Tailleur', category_slug: 'fashion', category_name: 'Ready-to-Wear', is_purchasable: false },
+  { image_url: 'image3.jpg', title: 'Body Wave Closure', category_slug: 'hair', category_name: 'Luxury Hair', is_purchasable: false },
+  { image_url: 'image4.jpg', title: 'Petale Blanche', category_slug: 'bridal', category_name: 'Bridal', is_purchasable: false },
+  { image_url: 'image5.jpg', title: 'Soie Dorée', category_slug: 'custom', category_name: 'Custom Atelier', is_purchasable: false }
+];
+
+let discoveredItems = []; // auto-probed photos/videos — populated once initLookbookDiscovery resolves
+let curatedItems = []; // whatever is currently on screen, in lightbox-navigable order
 
 function priceBadgeHtml(item) {
+  if (item.no_badge) return '';
   if (!item.is_purchasable) return '<span class="lb-price bespoke">Bespoke</span>';
   if (item.stock_status === 'sold_out') return '<span class="lb-price sold-out">Sold Out</span>';
   const amount = item.price != null ? (item.currency + ' ' + Number(item.price).toLocaleString()) : 'Price on Request';
@@ -1106,60 +1100,76 @@ function stockLineHtml(item) {
   return '<span class="stock-line">' + (item.stock_status === 'in_stock' ? 'In Stock' : 'Made to Order') + '</span>';
 }
 
-function renderCarousel(items) {
-  if (!items.length) {
-    lbCarousel.innerHTML = '<p class="lb-carousel-status">No photos yet — add image1.jpg (etc.) to the project folder.</p>';
+// Single renderer for the whole grid — real products, the curated
+// fallback, and auto-discovered photos/videos all flow through here,
+// so browsing "All" is the same spacious grid as every category tab
+// rather than a boxed-in horizontal strip.
+function renderGrid(list) {
+  const grid = document.getElementById('lookGrid');
+  if (!list.length) {
+    grid.innerHTML = '<p class="lb-carousel-status">No pieces match right now — try a different filter.</p>';
+    curatedItems.length = 0;
     return;
   }
-  lbCarousel.innerHTML = items.map(function (item, i) {
-    const media = item.type === 'video'
-      ? '<video src="' + item.src + '" muted playsinline preload="metadata"></video><span class="lbc-play">&#9658;</span>'
-      : '<img src="' + item.src + '" alt="Lookbook photo ' + (i + 1) + '" loading="lazy">';
-    const priceHtml = item.product ? priceBadgeHtml(item.product) : '';
-    return '<div class="lb-slide" data-index="' + i + '">' + media + priceHtml + '</div>';
+  grid.innerHTML = list.map(function (item, i) {
+    const layoutClass = item.is_featured ? ' wide' : '';
+    const mediaHtml = item.video_url
+      ? '<video src="' + item.video_url + '" muted playsinline preload="metadata"></video><span class="lbc-play">&#9658;</span>'
+      : '<img src="' + item.image_url + '" alt="' + (item.title || '') + '" loading="lazy">';
+    const canOrder = item.is_purchasable && item.stock_status !== 'sold_out';
+    const orderBtnHtml = canOrder ? '<button type="button" class="lb-order-btn" data-index="' + i + '">Order This</button>' : '';
+    return '<div class="lb-card' + layoutClass + '" data-category="' + (item.category_slug || '') + '">' +
+      mediaHtml +
+      priceBadgeHtml(item) +
+      '<span class="lb-pill">Look ' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + stockLineHtml(item) + '</p>' + orderBtnHtml + '</div>' +
+      '</div>';
   }).join('');
 
-  lbCarousel.querySelectorAll('.lb-slide').forEach(function (el) {
-    el.addEventListener('click', function () {
-      openLightbox(carouselItems, parseInt(el.getAttribute('data-index'), 10));
+  curatedItems.length = 0;
+  Array.from(grid.querySelectorAll('.lb-card')).forEach(function (card, i) {
+    const item = list[i];
+    curatedItems.push({
+      type: item.video_url ? 'video' : 'image',
+      src: item.video_url || item.image_url,
+      title: item.title || '',
+      label: item.category_name || '',
+      product: item.id ? item : null
     });
+    card.addEventListener('click', function () { openLightbox(curatedItems, i); });
+
+    const orderBtn = card.querySelector('.lb-order-btn');
+    if (orderBtn) {
+      orderBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openOrderModal(item);
+      });
+    }
   });
 }
 
-if (lbCarouselPrevBtn) lbCarouselPrevBtn.addEventListener('click', () => lbCarousel.scrollBy({ left: -320, behavior: 'smooth' }));
-if (lbCarouselNextBtn) lbCarouselNextBtn.addEventListener('click', () => lbCarousel.scrollBy({ left: 320, behavior: 'smooth' }));
-
-(async function initLookbookCarousel() {
+(async function initLookbookDiscovery() {
   const [photos, videos] = await Promise.all([discoverLookbookPhotos(), discoverLookbookVideos()]);
-  carouselItems = photos.concat(videos);
-  renderCarousel(carouselItems);
+  discoveredItems = photos.concat(videos).map(function (item) {
+    return {
+      image_url: item.type === 'image' ? item.src : null,
+      video_url: item.type === 'video' ? item.src : null,
+      title: item.title || '',
+      category_name: item.label || '',
+      is_purchasable: false,
+      no_badge: true
+    };
+  });
+  if (!allProducts.length && currentShopCategory === 'all') refreshShopView();
 })();
-
-// -- Curated grid is clickable too, opening the same lightbox --
-const curatedItems = Array.from(document.querySelectorAll('#lookGrid .lb-card')).map(function (card) {
-  const img = card.querySelector('img');
-  const title = card.querySelector('.lb-card-info h3');
-  const label = card.querySelector('.lb-card-info p');
-  return {
-    type: 'image',
-    src: img ? img.getAttribute('src') : '',
-    title: title ? title.textContent : '',
-    label: label ? label.textContent : ''
-  };
-});
-document.querySelectorAll('#lookGrid .lb-card').forEach(function (card, i) {
-  card.addEventListener('click', function () { openLightbox(curatedItems, i); });
-});
 
 // -- Once real products load from the API, everything below drives the
 //    "browse and select" experience: category filtering (shared with
 //    the tabs above), a sort + availability toolbar, and a Quick View
 //    (via the lightbox) with full product details, on top of the
-//    direct "Order This" shortcut. Until the API responds, the static
-//    cards/carousel above are left exactly as they were — nothing here
-//    can break the page if the backend is unreachable. Products are
-//    images only in this schema (no video field), so the carousel's
-//    file-probed videos still show up whenever the API is empty. --
+//    direct "Order This" shortcut. Until the API responds, the
+//    discovered/curated fallback above is left exactly as it is —
+//    nothing here can break the page if the backend is unreachable. --
 let allProducts = [];
 let currentShopCategory = 'all';
 let currentShopSort = 'featured';
@@ -1183,58 +1193,18 @@ function getShopList(categorySlug) {
   return list;
 }
 
-function renderProductGrid(list) {
-  const grid = document.getElementById('lookGrid');
-  if (!list.length) {
-    grid.innerHTML = '<p class="lb-carousel-status">No pieces match right now — try a different filter.</p>';
-    curatedItems.length = 0;
-    return;
-  }
-  grid.innerHTML = list.map(function (item, i) {
-    const layoutClass = item.is_featured ? ' wide' : '';
-    const canOrder = item.is_purchasable && item.stock_status !== 'sold_out';
-    const orderBtnHtml = canOrder ? '<button type="button" class="lb-order-btn" data-index="' + i + '">Order This</button>' : '';
-    return '<div class="lb-card' + layoutClass + '" data-category="' + (item.category_slug || '') + '">' +
-      '<img src="' + item.image_url + '" alt="' + (item.title || '') + '">' +
-      priceBadgeHtml(item) +
-      '<span class="lb-pill">Look ' + String(i + 1).padStart(2, '0') + '</span>' +
-      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + stockLineHtml(item) + '</p>' + orderBtnHtml + '</div>' +
-      '</div>';
-  }).join('');
-
-  curatedItems.length = 0;
-  Array.from(grid.querySelectorAll('.lb-card')).forEach(function (card, i) {
-    const img = card.querySelector('img');
-    curatedItems.push({ type: 'image', src: img.getAttribute('src'), title: list[i].title || '', label: list[i].category_name || '', product: list[i] });
-    card.addEventListener('click', function () { openLightbox(curatedItems, i); });
-
-    const orderBtn = card.querySelector('.lb-order-btn');
-    if (orderBtn) {
-      orderBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        openOrderModal(list[i]);
-      });
-    }
-  });
-}
-
-function renderProductCarousel(list) {
-  carouselItems = list.map(function (item) {
-    return { type: 'image', src: item.image_url, title: item.title || '', label: item.category_name || '', product: item };
-  });
-  renderCarousel(carouselItems);
-}
-
 function refreshShopView() {
-  const list = getShopList(currentShopCategory);
   const countEl = document.getElementById('shopResultCount');
-  if (countEl) countEl.textContent = list.length + (list.length === 1 ? ' piece' : ' pieces');
-
-  if (currentShopCategory === 'all') {
-    renderProductCarousel(list);
+  let list;
+  if (allProducts.length) {
+    list = getShopList(currentShopCategory);
+    if (countEl) countEl.textContent = list.length + (list.length === 1 ? ' piece' : ' pieces');
+  } else if (currentShopCategory === 'all') {
+    list = discoveredItems;
   } else {
-    renderProductGrid(list);
+    list = CURATED_FALLBACK.filter(function (p) { return p.category_slug === currentShopCategory; });
   }
+  renderGrid(list);
 }
 
 apiFetch('/api/products').then(function (items) {
@@ -1270,8 +1240,8 @@ function renderLightboxStage() {
     ? '<video src="' + item.src + '" controls autoplay playsinline></video>'
     : '<img src="' + item.src + '" alt="' + (item.title || 'Lookbook photo') + '">';
 
-  // Items carrying a real product (see renderProductGrid/renderProductCarousel)
-  // get the fuller Quick View treatment; plain file-probed photos/videos just
+  // Items carrying a real product (see renderGrid above) get the fuller
+  // Quick View treatment; plain file-probed photos/videos just
   // show the simple caption, same as before.
   const product = item.product;
   let captionHtml = '';
@@ -1426,29 +1396,7 @@ function filterLookbook(category, btnEl) {
   }
 
   currentShopCategory = category;
-  const grid = document.getElementById('lookGrid');
-  const carousel = document.getElementById('lbCarouselWrap');
-
-  if (category === 'all') {
-    // "All" browses the auto-detected carousel instead of the curated grid.
-    grid.classList.add('lb-hidden');
-    carousel.classList.add('active');
-  } else {
-    grid.classList.remove('lb-hidden');
-    carousel.classList.remove('active');
-  }
-
-  if (allProducts.length) {
-    // Real product data: re-render from scratch with the current
-    // category + sort + availability filter applied.
-    refreshShopView();
-  } else {
-    // Static fallback: nothing dynamic to re-render, just toggle
-    // visibility of the pre-rendered curated cards.
-    document.querySelectorAll('#lookGrid .lb-card').forEach(card => {
-      card.classList.toggle('lb-hidden', category !== 'all' && card.dataset.category !== category);
-    });
-  }
+  refreshShopView();
 }
 
 // ── BOOKING FORM (Formspree) ──
