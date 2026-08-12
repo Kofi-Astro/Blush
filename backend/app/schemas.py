@@ -78,6 +78,7 @@ class OrderCreate(BaseModel):
     phone: str = Field(min_length=1, max_length=30)
     delivery_notes: str | None = None
     items: list[OrderItemIn] = Field(min_length=1)
+    website: str | None = None  # honeypot — real visitors never see or fill this field
 
 
 class OrderItemOut(BaseModel):
@@ -119,6 +120,7 @@ class ConsultationCreate(BaseModel):
     service_type_id: int | None = None
     preferred_date: date | None = None
     design_requirements: str | None = None
+    website: str | None = None  # honeypot — real visitors never see or fill this field
 
 
 class ConsultationStatusUpdate(BaseModel):

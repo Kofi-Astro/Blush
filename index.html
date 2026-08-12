@@ -325,6 +325,11 @@ section{padding:6.5rem 5rem}
 
 .contact-form{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
 .contact-form .full{grid-column:span 2}
+/* Honeypot — invisible to real visitors, but a plain text field bots
+   tend to auto-fill; a non-empty value tells the backend to reject the
+   submission as spam. Positioned off-screen rather than display:none
+   so it still reads as a normal fillable field to naive bots. */
+.hp-field{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden}
 .form-field label{display:block;font-size:0.63rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-ink);margin-bottom:0.6rem}
 .form-field input,.form-field select,.form-field textarea{width:100%;background:transparent;border:1px solid rgba(201,168,76,0.28);color:var(--white);padding:0.85rem 0.9rem;font-family:'Montserrat',sans-serif;font-size:0.85rem;transition:border-color 0.3s}
 .form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--gold)}
@@ -717,6 +722,10 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
         <label for="bc-message">Tell Us About the Look</label>
         <textarea id="bc-message" name="Message" placeholder="Occasion, inspiration, timeline..." required></textarea>
       </div>
+      <div class="hp-field" aria-hidden="true">
+        <label for="bc-website">Website</label>
+        <input type="text" id="bc-website" tabindex="-1" autocomplete="off">
+      </div>
       <p class="form-status" id="formStatus"></p>
       <button type="submit" class="btn-submit" id="submitBtn">Request Consultation</button>
       <p class="form-note">We typically respond within two business days.</p>
@@ -801,6 +810,10 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
         <div class="form-field full">
           <label for="om-notes">Notes (size, color, delivery preference...)</label>
           <textarea id="om-notes"></textarea>
+        </div>
+        <div class="hp-field" aria-hidden="true">
+          <label for="om-website">Website</label>
+          <input type="text" id="om-website" tabindex="-1" autocomplete="off">
         </div>
         <p class="form-status" id="orderStatus"></p>
         <button type="submit" class="btn-submit" id="orderSubmitBtn">Place Order Request</button>
@@ -1368,6 +1381,7 @@ document.addEventListener('keydown', function (e) {
 orderForm.addEventListener('submit', function (e) {
   e.preventDefault();
   if (!currentOrderProduct) return;
+  if (document.getElementById('om-website').value) return; // honeypot tripped — silently drop
   const originalText = orderSubmitBtn.textContent;
 
   orderStatus.className = 'form-status';
@@ -1375,30 +1389,69 @@ orderForm.addEventListener('submit', function (e) {
   orderSubmitBtn.disabled = true;
   orderSubmitBtn.textContent = 'Sending…';
 
-  fetch(API_BASE_URL + '/api/orders', {
+  const fullName = document.getElementById('om-name').value;
+  const email = document.getElementById('om-email').value;
+  const phone = document.getElementById('om-phone').value;
+  const qty = parseInt(document.getElementById('om-qty').value, 10) || 1;
+  const notes = document.getElementById('om-notes').value;
+  const honeypot = document.getElementById('om-website').value;
+  const priceLine = currentOrderProduct.price != null
+    ? (currentOrderProduct.currency + ' ' + Number(currentOrderProduct.price).toLocaleString())
+    : 'Price on request';
+
+  // Order requests only reached the admin dashboard before, so a new
+  // order was easy to miss unless someone happened to check /admin.
+  // Notify the same inbox consultations already go to, same as
+  // bcSendBooking below — sent alongside the API call, not instead of
+  // it, so the order still saves even if Formspree hiccups.
+  const fd = new FormData();
+  fd.append('Full Name', fullName);
+  fd.append('Email', email);
+  fd.append('Phone', phone);
+  fd.append('Product', currentOrderProduct.title || '');
+  fd.append('Quantity', String(qty));
+  fd.append('Price', priceLine);
+  fd.append('Notes', notes || '—');
+  fd.append('_subject', 'New Order Request — Blush Closet');
+  const formspreeRequest = fetch('https://formspree.io/f/xzdnyora', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: fd
+  }).then(function (response) {
+    if (!response.ok) throw new Error('Formspree responded with an error');
+  });
+
+  const apiRequest = fetch(API_BASE_URL + '/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      full_name: document.getElementById('om-name').value,
-      email: document.getElementById('om-email').value,
-      phone: document.getElementById('om-phone').value,
-      delivery_notes: document.getElementById('om-notes').value || null,
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      delivery_notes: notes || null,
+      website: honeypot || null,
       items: [{
         product_id: currentOrderProduct.id,
-        quantity: parseInt(document.getElementById('om-qty').value, 10) || 1
+        quantity: qty
       }]
     })
   }).then(function (response) {
     if (!response.ok) throw new Error('Order request failed');
-    orderStatus.textContent = 'Order request received — we\'ll follow up within two business days to confirm details.';
-    orderStatus.classList.add('show');
-    orderSubmitBtn.textContent = 'Sent ✓';
-    setTimeout(closeOrderModal, 2200);
-  }).catch(function () {
-    orderStatus.textContent = 'Something went wrong sending your request. Please try again, or reach us directly by phone or email.';
-    orderStatus.classList.add('show', 'error');
-    orderSubmitBtn.disabled = false;
-    orderSubmitBtn.textContent = originalText;
+  });
+
+  Promise.allSettled([formspreeRequest, apiRequest]).then(function (results) {
+    const anySucceeded = results.some(function (r) { return r.status === 'fulfilled'; });
+    if (anySucceeded) {
+      orderStatus.textContent = 'Order request received — we\'ll follow up within two business days to confirm details.';
+      orderStatus.classList.add('show');
+      orderSubmitBtn.textContent = 'Sent ✓';
+      setTimeout(closeOrderModal, 2200);
+    } else {
+      orderStatus.textContent = 'Something went wrong sending your request. Please try again, or reach us directly by phone or email.';
+      orderStatus.classList.add('show', 'error');
+      orderSubmitBtn.disabled = false;
+      orderSubmitBtn.textContent = originalText;
+    }
   });
 });
 
@@ -1425,6 +1478,7 @@ function filterLookbook(category, btnEl) {
 // ── BOOKING FORM (Formspree) ──
 function bcSendBooking(event) {
   event.preventDefault();
+  if (document.getElementById('bc-website').value) return; // honeypot tripped — silently drop
   const form = document.getElementById('bookingForm');
   const btn = document.getElementById('submitBtn');
   const status = document.getElementById('formStatus');

@@ -18,6 +18,9 @@ VALID_STATUSES = {"pending", "confirmed", "processing", "ready", "completed", "c
 def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
     """Public — an order request, not a payment. Product title/price are snapshotted
     server-side from the current product record so they can't be spoofed by the client."""
+    if payload.website:
+        raise HTTPException(status_code=400, detail="Invalid submission")
+
     order = Order(
         full_name=payload.full_name,
         email=payload.email,

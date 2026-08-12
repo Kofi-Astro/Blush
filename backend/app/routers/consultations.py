@@ -17,7 +17,10 @@ VALID_STATUSES = {"pending", "confirmed", "in_progress", "completed", "cancelled
 @router.post("", response_model=ConsultationOut, status_code=status.HTTP_201_CREATED)
 def create_consultation(payload: ConsultationCreate, db: Session = Depends(get_db)):
     """Public endpoint — the site's contact form posts here."""
-    consultation = ConsultationRequest(**payload.model_dump())
+    if payload.website:
+        raise HTTPException(status_code=400, detail="Invalid submission")
+
+    consultation = ConsultationRequest(**payload.model_dump(exclude={"website"}))
     db.add(consultation)
     db.commit()
     db.refresh(consultation)
