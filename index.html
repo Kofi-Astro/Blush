@@ -192,6 +192,11 @@ section{padding:6.5rem 5rem}
 .lb-card-info p{font-size:0.62rem;letter-spacing:0.16em;color:var(--gold-light);text-transform:uppercase}
 .lb-pill{position:absolute;top:1rem;right:1rem;background:rgba(8,8,8,0.65);border:1px solid var(--gold);color:var(--gold-light);font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:0.28rem 0.7rem;backdrop-filter:blur(3px)}
 .lb-hidden{display:none !important}
+.lb-price{position:absolute;top:1rem;left:1rem;background:var(--gold);color:var(--ink-on-gold);font-size:0.68rem;font-weight:700;letter-spacing:0.03em;padding:0.32rem 0.75rem;z-index:1}
+.lb-price.bespoke{background:rgba(8,8,8,0.65);border:1px solid var(--gold);color:var(--gold-light);font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase}
+.lb-price.sold-out{background:rgba(8,8,8,0.75);border:1px solid #a06060;color:#e08a8a;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase}
+.lb-order-btn{margin-top:0.6rem;background:var(--gold);color:var(--ink-on-gold);border:none;padding:0.5rem 1.1rem;font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background 0.3s}
+.lb-order-btn:hover{background:var(--gold-light)}
 
 /* All-tab carousel: auto-populated from however many image1, image2...
    files actually exist, rather than a fixed curated set. */
@@ -233,6 +238,22 @@ section{padding:6.5rem 5rem}
   .lightbox-prev{left:0.6rem}
   .lightbox-next{right:0.6rem}
   .lb-slide{flex-basis:220px;height:290px}
+}
+
+/* ── ORDER MODAL: opens from a product's "Order This" button ── */
+.order-modal{position:fixed;inset:0;background:rgba(5,5,5,0.96);z-index:2100;display:none;align-items:center;justify-content:center;padding:4vh 4vw}
+.order-modal.show{display:flex}
+.order-modal-inner{position:relative;background:var(--black2);max-width:920px;width:100%;max-height:90vh;overflow-y:auto;display:grid;grid-template-columns:0.9fr 1.1fr;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+.order-modal-media{background:#222 center/cover no-repeat;min-height:260px;filter:brightness(0.85) saturate(0.95)}
+.order-modal-body{padding:2.2rem}
+.order-modal-body h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:0.4rem}
+.order-modal-price{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold-light)}
+.order-modal-close{position:absolute;top:1rem;right:1rem;width:38px;height:38px;border-radius:50%;background:rgba(20,20,20,0.6);border:1px solid rgba(201,168,76,0.35);color:var(--gold);cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:border-color 0.3s;z-index:1}
+.order-modal-close:hover{border-color:var(--gold)}
+@media(max-width:700px){
+  .order-modal-inner{grid-template-columns:1fr}
+  .order-modal-media{min-height:180px}
+  .order-modal-body{padding:1.6rem}
 }
 
 /* ── STATS STRIP ── */
@@ -343,7 +364,7 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
   </a>
   <ul class="nav-links">
     <li><a href="#about">Designer</a></li>
-    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#lookbook">Shop</a></li>
     <li><a href="#contact">Contact</a></li>
     <li>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between dark and light theme">
@@ -376,7 +397,7 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
     <p class="hero-tagline">Made-to-measure fashion. Luxury hair. One closet.</p>
     <p class="hero-desc">Blush Closet designs bridal, ready-to-wear, and fully custom couture — and sources the luxury hair to match. Every piece fitted in person, every install finished by hand.</p>
     <div class="hero-actions">
-      <a href="#lookbook" class="btn-gold">View the Lookbook</a>
+      <a href="#lookbook" class="btn-gold">Shop the Collection</a>
       <a href="#contact" class="btn-outline">Book a Consultation</a>
     </div>
     <div class="hero-contact-strip">
@@ -411,6 +432,7 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
     <span class="ticker-item">Ready&#8209;to&#8209;Wear</span><span class="ticker-sep"></span>
     <span class="ticker-item">Luxury Hair</span><span class="ticker-sep"></span>
     <span class="ticker-item">Custom Atelier</span><span class="ticker-sep"></span>
+    <span class="ticker-item">Shop Online</span><span class="ticker-sep"></span>
     <span class="ticker-item">Afienya - Accra, Ghana</span><span class="ticker-sep"></span>
   </div>
 </div>
@@ -462,10 +484,10 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
 <section id="lookbook">
   <div class="lb-intro r">
     <div>
-      <div class="sec-label">The Lookbook</div>
-      <h2 class="sec-h2">Fashion <em>&amp; Hair,</em><br>Side by Side</h2>
+      <div class="sec-label">Shop &amp; Lookbook</div>
+      <h2 class="sec-h2">Shop the <em>Collection.</em></h2>
     </div>
-    <p class="sec-p">Every look and install shown here is made or sourced to order. Filter by category to see fashion, bridal, hair, or fully custom work.</p>
+    <p class="sec-p">Pieces marked with a price can be ordered directly — tap <em>Order This</em> for details. Bridal and fully custom work remains made-to-measure; reach out and we'll build it with you. Filter by category to browse fashion, bridal, hair, or custom atelier work.</p>
   </div>
 
   <div class="lb-tabs r r2">
@@ -490,41 +512,49 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
   <div class="lb-grid r r3 lb-hidden" id="lookGrid">
     <div class="lb-card wide" data-category="fashion">
       <img src="image1.jpg" alt="Look 01 — Ready-to-Wear">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 01</span>
       <div class="lb-card-info"><h3>Ivory Column</h3><p>Ready-to-Wear</p></div>
     </div>
     <div class="lb-card" data-category="bridal">
       <img src="image8.jpg" alt="Look 02 — Bridal">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 02</span>
       <div class="lb-card-info"><h3>Gilded Veil</h3><p>Bridal</p></div>
     </div>
     <div class="lb-card tall" data-category="hair">
       <img src="image9.jpg" alt="Look 03 — Luxury Hair">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 03</span>
       <div class="lb-card-info"><h3>Bone Straight 26"</h3><p>Luxury Hair</p></div>
     </div>
     <div class="lb-card" data-category="custom">
       <img src="image10.jpg" alt="Look 04 — Custom Atelier">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 04</span>
       <div class="lb-card-info"><h3>Draped Bronze</h3><p>Custom Atelier</p></div>
     </div>
     <div class="lb-card" data-category="fashion">
       <img src="image2.jpg" alt="Look 05 — Ready-to-Wear">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 05</span>
       <div class="lb-card-info"><h3>Noir Tailleur</h3><p>Ready-to-Wear</p></div>
     </div>
     <div class="lb-card wide" data-category="hair">
       <img src="image3.jpg" alt="Look 06 — Luxury Hair">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 06</span>
       <div class="lb-card-info"><h3>Body Wave Closure</h3><p>Luxury Hair</p></div>
     </div>
     <div class="lb-card" data-category="bridal">
       <img src="image4.jpg" alt="Look 07 — Bridal">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 07</span>
       <div class="lb-card-info"><h3>Petale Blanche</h3><p>Bridal</p></div>
     </div>
     <div class="lb-card" data-category="custom">
       <img src="image5.jpg" alt="Look 08 — Custom Atelier">
+      <span class="lb-price bespoke">Bespoke</span>
       <span class="lb-pill">Look 08</span>
       <div class="lb-card-info"><h3>Soie Dorée</h3><p>Custom Atelier</p></div>
     </div>
@@ -671,6 +701,46 @@ footer{background:var(--black);padding:4rem 5rem 2rem;border-top:1px solid rgba(
   <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous look">‹</button>
   <div class="lightbox-stage" id="lightboxStage"></div>
   <button class="lightbox-next" id="lightboxNext" aria-label="Next look">›</button>
+</div>
+
+<!-- Order modal: opens from a product's "Order This" button. This is an
+     order REQUEST, not a payment — it posts to /api/orders and we follow
+     up to confirm availability, pricing, and delivery. -->
+<div class="order-modal" id="orderModal" role="dialog" aria-modal="true" aria-label="Order this piece">
+  <div class="order-modal-inner">
+    <button class="order-modal-close" id="orderModalClose" aria-label="Close" type="button">&times;</button>
+    <div class="order-modal-media" id="orderModalMedia"></div>
+    <div class="order-modal-body">
+      <div class="sec-label" style="margin-bottom:0.6rem">Order Request</div>
+      <h3 id="orderModalTitle"></h3>
+      <p class="order-modal-price" id="orderModalPrice"></p>
+      <form class="contact-form" id="orderForm" style="margin-top:1.2rem">
+        <div class="form-field">
+          <label for="om-name">Full Name</label>
+          <input type="text" id="om-name" required>
+        </div>
+        <div class="form-field">
+          <label for="om-email">Email</label>
+          <input type="email" id="om-email" required>
+        </div>
+        <div class="form-field">
+          <label for="om-phone">Phone</label>
+          <input type="tel" id="om-phone" required>
+        </div>
+        <div class="form-field">
+          <label for="om-qty">Quantity</label>
+          <input type="number" id="om-qty" min="1" value="1" required>
+        </div>
+        <div class="form-field full">
+          <label for="om-notes">Notes (size, color, delivery preference...)</label>
+          <textarea id="om-notes"></textarea>
+        </div>
+        <p class="form-status" id="orderStatus"></p>
+        <button type="submit" class="btn-submit" id="orderSubmitBtn">Place Order Request</button>
+        <p class="form-note">This reserves nothing yet — we'll confirm availability and pricing, then follow up to arrange payment and delivery.</p>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1000,17 +1070,32 @@ document.querySelectorAll('#lookGrid .lb-card').forEach(function (card, i) {
 //    carousel below are left exactly as they were. Products are
 //    images only in this schema (no video field), so type is always
 //    'image' here — the "All" carousel's file-probed videos still
-//    show up whenever the API is empty. --
+//    show up whenever the API is empty.
+//
+//    Purchasable, in-stock products get a price badge and an "Order
+//    This" button (wired to the order modal below); everything else
+//    (bridal/custom/showcase-only pieces) gets a "Bespoke" badge and
+//    no order button, same as the static fallback cards. --
+function priceBadgeHtml(item) {
+  if (!item.is_purchasable) return '<span class="lb-price bespoke">Bespoke</span>';
+  if (item.stock_status === 'sold_out') return '<span class="lb-price sold-out">Sold Out</span>';
+  const amount = item.price != null ? (item.currency + ' ' + Number(item.price).toLocaleString()) : 'Price on Request';
+  return '<span class="lb-price">' + amount + '</span>';
+}
+
 apiFetch('/api/products').then(function (items) {
   if (!items || !items.length) return;
 
   const grid = document.getElementById('lookGrid');
   grid.innerHTML = items.map(function (item, i) {
     const layoutClass = item.is_featured ? ' wide' : '';
+    const canOrder = item.is_purchasable && item.stock_status !== 'sold_out';
+    const orderBtnHtml = canOrder ? '<button type="button" class="lb-order-btn" data-index="' + i + '">Order This</button>' : '';
     return '<div class="lb-card' + layoutClass + '" data-category="' + (item.category_slug || '') + '">' +
       '<img src="' + item.image_url + '" alt="' + (item.title || '') + '">' +
+      priceBadgeHtml(item) +
       '<span class="lb-pill">Look ' + String(i + 1).padStart(2, '0') + '</span>' +
-      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + '</p></div>' +
+      '<div class="lb-card-info"><h3>' + (item.title || '') + '</h3><p>' + (item.category_name || '') + '</p>' + orderBtnHtml + '</div>' +
       '</div>';
   }).join('');
 
@@ -1021,6 +1106,14 @@ apiFetch('/api/products').then(function (items) {
     const label = card.querySelector('.lb-card-info p');
     curatedItems.push({ type: 'image', src: img.getAttribute('src'), title: title.textContent, label: label.textContent });
     card.addEventListener('click', function () { openLightbox(curatedItems, i); });
+
+    const orderBtn = card.querySelector('.lb-order-btn');
+    if (orderBtn) {
+      orderBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openOrderModal(items[i]);
+      });
+    }
   });
 
   carouselItems = items.map(function (item) {
@@ -1083,6 +1176,79 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') stepLightbox(-1);
   if (e.key === 'ArrowRight') stepLightbox(1);
+});
+
+// ── ORDER MODAL: opens from a product's "Order This" button ──
+const orderModal = document.getElementById('orderModal');
+const orderModalClose = document.getElementById('orderModalClose');
+const orderForm = document.getElementById('orderForm');
+const orderStatus = document.getElementById('orderStatus');
+const orderSubmitBtn = document.getElementById('orderSubmitBtn');
+let currentOrderProduct = null;
+
+function openOrderModal(product) {
+  currentOrderProduct = product;
+  document.getElementById('orderModalTitle').textContent = product.title || '';
+  document.getElementById('orderModalPrice').textContent = product.price != null
+    ? (product.currency + ' ' + Number(product.price).toLocaleString())
+    : 'Price on request';
+  document.getElementById('orderModalMedia').style.backgroundImage = "url('" + product.image_url + "')";
+  orderForm.reset();
+  document.getElementById('om-qty').value = 1;
+  orderStatus.className = 'form-status';
+  orderStatus.textContent = '';
+  orderSubmitBtn.disabled = false;
+  orderSubmitBtn.textContent = 'Place Order Request';
+  orderModal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOrderModal() {
+  orderModal.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+orderModalClose.addEventListener('click', closeOrderModal);
+orderModal.addEventListener('click', function (e) { if (e.target === orderModal) closeOrderModal(); });
+document.addEventListener('keydown', function (e) {
+  if (orderModal.classList.contains('show') && e.key === 'Escape') closeOrderModal();
+});
+
+orderForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  if (!currentOrderProduct) return;
+  const originalText = orderSubmitBtn.textContent;
+
+  orderStatus.className = 'form-status';
+  orderStatus.textContent = '';
+  orderSubmitBtn.disabled = true;
+  orderSubmitBtn.textContent = 'Sending…';
+
+  fetch(API_BASE_URL + '/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      full_name: document.getElementById('om-name').value,
+      email: document.getElementById('om-email').value,
+      phone: document.getElementById('om-phone').value,
+      delivery_notes: document.getElementById('om-notes').value || null,
+      items: [{
+        product_id: currentOrderProduct.id,
+        quantity: parseInt(document.getElementById('om-qty').value, 10) || 1
+      }]
+    })
+  }).then(function (response) {
+    if (!response.ok) throw new Error('Order request failed');
+    orderStatus.textContent = 'Order request received — we\'ll follow up within two business days to confirm details.';
+    orderStatus.classList.add('show');
+    orderSubmitBtn.textContent = 'Sent ✓';
+    setTimeout(closeOrderModal, 2200);
+  }).catch(function () {
+    orderStatus.textContent = 'Something went wrong sending your request. Please try again, or reach us directly by phone or email.';
+    orderStatus.classList.add('show', 'error');
+    orderSubmitBtn.disabled = false;
+    orderSubmitBtn.textContent = originalText;
+  });
 });
 
 // ── LOOKBOOK FILTER (also driven by the category strip above it) ──
