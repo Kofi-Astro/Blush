@@ -2,6 +2,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import get_settings
@@ -43,6 +44,13 @@ app.include_router(uploads.router)
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.get("/")
+def root():
+    # Lets a custom domain like admin.blushcloset.xyz land straight on the
+    # dashboard instead of a bare 404 at the root path.
+    return RedirectResponse(url="/admin")
 
 
 admin_dir = Path(__file__).resolve().parent.parent / "admin"

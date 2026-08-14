@@ -21,15 +21,17 @@ Data lives in Supabase (Postgres + Storage). Full backend setup, environment var
 
 Single file, no build step. Sections: hero (video/photo rotation), designer bio, category strip, shop grid (the product catalog — filterable, sortable, with a Quick View lightbox and an order-request modal), stats, contact/booking form, footer.
 
-**Images and videos are auto-discovered, not hardcoded.** Drop a file in following one of these naming conventions and the site's JS finds it on load by probing sequentially until a number 404s — no code changes needed:
+**Images and videos are auto-discovered, not hardcoded**, and all live in **[`media/`](media/)** to keep the repo root tidy. Drop a file in there following one of these naming conventions and the site's JS finds it on load by probing sequentially until a number 404s — no code changes needed:
 
 | Convention | Used for |
 |---|---|
-| `image1.jpg`, `image2.jpg`, ... (any of `.jpg`/`.jpeg`/`.png`/`.webp`, mixed extensions fine) | Hero photo fallback + the shop grid's file-probed fallback (only used if the API has no products) |
-| `hero-reel-1.mp4`, `hero-reel-2.mp4`, ... | Hero video rotation |
-| `look-video-1.mp4`, `look-video-2.mp4`, ... | Video entries in the shop grid's fallback |
+| `media/image1.jpg`, `media/image2.jpg`, ... (any of `.jpg`/`.jpeg`/`.png`/`.webp`, mixed extensions fine) | Hero photo fallback + the shop grid's file-probed fallback (only used if the API has no products) |
+| `media/hero-reel-1.mp4`, `media/hero-reel-2.mp4`, ... | Hero video fallback |
+| `media/look-video-1.mp4`, `media/look-video-2.mp4`, ... | Video entries in the shop grid's fallback |
 
-In practice, most product photos now go through the admin dashboard instead (`/admin` → Products), which uploads to Supabase Storage and watermarks the image — see below. The `imageN.jpg` convention still matters for the hero fallback and as a no-JS-backend safety net.
+These are a **last-resort fallback now, not the primary content** — every product and every hero video has since been migrated into Supabase (Postgres + Storage) through the admin dashboard, watermarked in the process (see below), and that's what actually renders in normal operation via the API. The `media/` files only get used if the Railway backend itself is unreachable; keeping a small curated set here (rather than deleting them once migrated) preserves that fallback, since Cloudflare's static hosting is a third, independent point of failure from both Railway and Supabase.
+
+`media/logo.JPG` and `media/hair-logo.jpg` are the two brand marks — the site's own logo and the source images the watermarking system tiles onto uploads (see below). Both are referenced directly (nav logo, admin login/sidebar), not through the discovery convention.
 
 **Filenames are case-sensitive in production.** macOS's filesystem isn't, so a mismatch (`Image1.JPG` referenced as `image1.jpg`) works locally and 404s on Cloudflare. Keep new files lowercase.
 
@@ -65,4 +67,3 @@ The site's `API_BASE_URL` constant (near the bottom of `index.html`) points at t
 ## Known gaps
 
 - **No payments** — "Order This" captures a request for manual follow-up, not a transaction. Paystack is the natural fit if that changes (works well for GHS); see the note in `backend/README.md`.
-- **A handful of loose `*.MP4` files at the repo root** (UUID filenames) aren't wired into the site — they don't match the `hero-reel-N.mp4` / `look-video-N.mp4` convention above, so the site never discovers them. Rename them into that convention if they're meant to be live.
