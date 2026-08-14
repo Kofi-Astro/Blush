@@ -199,6 +199,10 @@ tr:hover td{background:#161616}
                 <select id="hero-media-type"><option value="video">Video</option><option value="photo">Photo</option></select>
               </div>
               <div><label>Sort Order</label><input type="number" id="hero-sort-order" value="0"></div>
+              <div><label>Watermark (photos only)</label>
+                <select id="hero-watermark"><option value="fashion">Fashion</option><option value="hair">Hair</option></select>
+                <p class="hint">Applies to both photo and video uploads. Video watermarking re-encodes the file, so it takes a bit longer to upload.</p>
+              </div>
               <div class="full"><label>Upload File (or leave blank and paste a URL below)</label><input type="file" id="hero-file" accept="image/*,video/*"></div>
               <div class="full"><label>Media URL</label><input type="text" id="hero-media-url" placeholder="https://..."></div>
             </div>
@@ -334,18 +338,26 @@ document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
 sidebarBackdrop.addEventListener('click', closeSidebar);
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSidebar(); });
 
-async function uploadIfFile(fileInputEl, folder) {
+async function uploadIfFile(fileInputEl, folder, watermark) {
   const file = fileInputEl.files[0];
   if (!file) return null;
   const fd = new FormData();
   fd.append('file', file);
-  const data = await api('/api/uploads/' + folder, { method: 'POST', body: fd });
+  const qs = watermark ? '?watermark=' + encodeURIComponent(watermark) : '';
+  const data = await api('/api/uploads/' + folder + qs, { method: 'POST', body: fd });
   return data.url;
 }
 
 // ── LOOKUP DATA ──
 let serviceTypesById = {};
 let categoriesById = {};
+// Only "Luxury Hair" gets the hair watermark — every other category
+// (Ready-to-Wear, Bridal, Custom Atelier) is fashion. Matched by name
+// since categories are managed straight in Supabase, not through this
+// dashboard, so there's no slug to rely on here.
+function watermarkForCategoryName(name) {
+  return (name || '').toLowerCase().includes('hair') ? 'hair' : 'fashion';
+}
 
 async function loadServiceTypes() {
   try {
@@ -475,7 +487,9 @@ document.getElementById('productForm').addEventListener('submit', async function
   statusEl.textContent = ''; statusEl.className = 'status-line';
   saveBtn.disabled = true;
   try {
-    const uploadedUrl = await uploadIfFile(document.getElementById('p-file'), 'products');
+    const categorySelect = document.getElementById('p-category');
+    const categoryName = categorySelect.options[categorySelect.selectedIndex] ? categorySelect.options[categorySelect.selectedIndex].text : '';
+    const uploadedUrl = await uploadIfFile(document.getElementById('p-file'), 'products', watermarkForCategoryName(categoryName));
     const imageUrl = uploadedUrl || document.getElementById('p-image-url').value.trim();
     if (!imageUrl) throw new Error('Provide a file upload or an image URL.');
 
@@ -594,7 +608,8 @@ document.getElementById('heroForm').addEventListener('submit', async function (e
   const statusEl = document.getElementById('heroStatus');
   statusEl.textContent = ''; statusEl.className = 'status-line';
   try {
-    const uploadedUrl = await uploadIfFile(document.getElementById('hero-file'), 'hero');
+    const watermark = document.getElementById('hero-watermark').value;
+    const uploadedUrl = await uploadIfFile(document.getElementById('hero-file'), 'hero', watermark);
     const mediaUrl = uploadedUrl || document.getElementById('hero-media-url').value.trim();
     if (!mediaUrl) throw new Error('Provide a file upload or a media URL.');
 

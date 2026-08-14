@@ -2,9 +2,11 @@ import mimetypes
 import uuid
 
 from fastapi import HTTPException, UploadFile, status
+from fastapi.concurrency import run_in_threadpool
 from supabase import Client, create_client
 
 from .config import get_settings
+from .watermark import apply_watermark, apply_watermark_to_video
 
 settings = get_settings()
 
@@ -18,21 +20,43 @@ def get_storage_client() -> Client:
     return _client
 
 
-async def upload_media_file(file: UploadFile, folder: str) -> str:
-    """Uploads a file to the `media` bucket and returns its public URL."""
-    extension = mimetypes.guess_extension(file.content_type or "") or ""
-    if not extension and file.filename and "." in file.filename:
-        extension = "." + file.filename.rsplit(".", 1)[-1]
+async def upload_media_file(file: UploadFile, folder: str, watermark: str | None = None) -> str:
+    """Uploads a file to the `media` bucket and returns its public URL.
+
+    Photos and videos both get a tiled brand-mark watermark first when
+    `watermark` is "fashion" or "hair" — piracy/screenshot deterrence for
+    anything customer-facing (see watermark.py; video needs ffmpeg on PATH,
+    which railpack.json installs at deploy time)."""
+    content_type = file.content_type or "application/octet-stream"
+    contents = await file.read()
+
+    if watermark in ("fashion", "hair") and content_type.startswith("image/"):
+        contents = await run_in_threadpool(apply_watermark, contents, watermark)
+        content_type = "image/jpeg"
+        extension = ".jpg"
+    elif watermark in ("fashion", "hair") and content_type.startswith("video/"):
+        try:
+            contents = await run_in_threadpool(apply_watermark_to_video, contents, watermark)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"Video watermarking failed: {exc}",
+            ) from exc
+        content_type = "video/mp4"
+        extension = ".mp4"
+    else:
+        extension = mimetypes.guess_extension(content_type) or ""
+        if not extension and file.filename and "." in file.filename:
+            extension = "." + file.filename.rsplit(".", 1)[-1]
 
     object_path = f"{folder}/{uuid.uuid4().hex}{extension}"
-    contents = await file.read()
 
     client = get_storage_client()
     try:
         client.storage.from_(settings.supabase_media_bucket).upload(
             object_path,
             contents,
-            {"content-type": file.content_type or "application/octet-stream"},
+            {"content-type": content_type},
         )
     except Exception as exc:  # supabase-py raises its own StorageException
         raise HTTPException(
