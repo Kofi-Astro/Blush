@@ -9,4 +9,4 @@ pyjwt==2.13.0
 bcrypt==4.2.1
 supabase==2.31.0
 python-multipart==0.0.32
-Pillow==11.1.0
+Pillow==12.3.0
