@@ -101,11 +101,14 @@ def apply_watermark_to_video(video_bytes: bytes, watermark: str) -> bytes:
             [
                 "ffprobe", "-v", "error", "-select_streams", "v:0",
                 "-show_entries", "stream=width,height",
-                "-of", "csv=s=x:p=0", str(src_path),
+                "-of", "default=noprint_wrappers=1:nokey=1", str(src_path),
             ],
             capture_output=True, text=True, check=True,
         )
-        width_str, height_str = probe.stdout.strip().split("x")
+        # One value per line (width, then height) — some inputs emit extra
+        # SIDE_DATA/trailing separators with the csv output format that
+        # threw off a plain split("x").
+        width_str, height_str = probe.stdout.strip().split("\n")[:2]
         width, height = int(width_str), int(height_str)
 
         layer = _tile_layer(width, height, watermark)
