@@ -4,46 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blush Closet — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#C9A84C;--black:#0A0A0A;--black2:#151515;--black3:#1E1E1E;--text:#B9B2A2;--white:#FAFAF5;--err:#e08a8a;--ok:#7fbf8a}
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--ink-on-gold:#0A0A0A;--black:#0A0A0A;--black2:#151515;--black3:#1E1E1E;--black4:#262626;--text:#B9B2A2;--white:#FAFAF5;--err:#e08a8a;--ok:#7fbf8a}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--black);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;min-height:100vh}
+body{background:var(--black);color:var(--white);font-family:'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;min-height:100vh}
 a{color:var(--gold)}
 button{cursor:pointer;font-family:inherit}
-input,select,textarea{font-family:inherit;background:var(--black3);border:1px solid #333;color:var(--white);padding:0.55rem 0.7rem;border-radius:4px;font-size:0.85rem}
+input,select,textarea{font-family:inherit;background:var(--black3);border:1px solid #333;color:var(--white);padding:0.6rem 0.75rem;border-radius:5px;font-size:0.85rem;transition:border-color 0.25s}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
-label{display:block;font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--gold);margin-bottom:0.35rem}
-.btn{background:var(--gold);color:#0A0A0A;border:none;padding:0.6rem 1.1rem;border-radius:4px;font-weight:600;font-size:0.8rem}
-.btn:hover{background:#dcb964}
+label{display:block;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem;font-weight:600}
+
+/* buttons — a soft gold shine sweep on hover, matching the main site's CTAs */
+.btn{background:var(--gold);color:var(--ink-on-gold);border:none;padding:0.65rem 1.3rem;border-radius:5px;font-weight:700;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;position:relative;overflow:hidden;transition:background 0.25s,transform 0.25s,box-shadow 0.25s}
+.btn:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:0 8px 22px rgba(201,168,76,0.25)}
+.btn::before{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(115deg,transparent,rgba(255,255,255,0.4),transparent);transform:skewX(-20deg);transition:left 0.6s ease;pointer-events:none}
+.btn:hover::before{left:130%}
 .btn.secondary{background:transparent;border:1px solid #444;color:var(--white)}
-.btn.secondary:hover{border-color:var(--gold);color:var(--gold)}
+.btn.secondary:hover{border-color:var(--gold);color:var(--gold);background:transparent;box-shadow:none}
 .btn.danger{background:transparent;border:1px solid var(--err);color:var(--err)}
-.btn.danger:hover{background:var(--err);color:#1a0505}
-.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn.danger:hover{background:var(--err);color:#1a0505;box-shadow:none}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
 /* login */
-#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center}
-.login-box{width:320px;background:var(--black2);border:1px solid #262626;border-radius:8px;padding:2rem}
-.login-box h1{font-size:1.1rem;color:var(--gold);margin-bottom:1.4rem;text-align:center}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#141210 0%,var(--black) 70%)}
+.login-box{width:340px;background:var(--black2);border:1px solid var(--black4);border-radius:12px;padding:2.4rem 2.2rem;animation:loginIn 0.6s cubic-bezier(.16,1,.3,1) both;box-shadow:0 30px 70px rgba(0,0,0,0.5)}
+@keyframes loginIn{from{opacity:0;transform:translateY(18px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.login-logo{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold);display:block;margin:0 auto 1rem}
+.login-box h1{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--gold);margin-bottom:0.3rem;text-align:center;letter-spacing:0.02em}
+.login-box .login-sub{text-align:center;font-size:0.66rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text);opacity:0.7;margin-bottom:1.8rem}
 .login-box .field{margin-bottom:1rem}
 .login-box input{width:100%}
-#loginError{color:var(--err);font-size:0.8rem;margin-top:0.6rem;min-height:1em}
+#loginError{color:var(--err);font-size:0.8rem;margin-top:0.8rem;min-height:1em;text-align:center}
 
 /* shell */
 #app{display:none}
 .shell{display:flex;min-height:100vh}
-.sidebar{width:200px;background:var(--black2);border-right:1px solid #262626;padding:1.5rem 0;flex-shrink:0;position:relative}
-.sidebar h2{color:var(--gold);font-size:1rem;padding:0 1.4rem 1.4rem;border-bottom:1px solid #262626;margin-bottom:1rem}
-.sidebar nav button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text);padding:0.75rem 1.4rem;font-size:0.85rem}
-.sidebar nav button:hover{color:var(--white)}
-.sidebar nav button.active{color:var(--gold);background:var(--black3);border-left:2px solid var(--gold)}
-.sidebar .logout{position:absolute;bottom:1.5rem;left:1.4rem}
-main{flex:1;padding:2rem 2.5rem;overflow-x:auto}
-main h1{font-size:1.3rem;margin-bottom:1.4rem;color:var(--gold)}
+.sidebar{width:210px;background:var(--black2);border-right:1px solid var(--black4);padding:1.6rem 0;flex-shrink:0;position:relative}
+.sidebar-brand{display:flex;align-items:center;gap:0.8rem;padding:0 1.3rem 1.4rem;border-bottom:1px solid var(--black4);margin-bottom:1.2rem}
+.sidebar-brand img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold);flex-shrink:0}
+.sidebar-brand .brand-name{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:1.02rem;line-height:1.15}
+.sidebar-brand .brand-sub{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text);opacity:0.7}
+.sidebar nav button{display:flex;align-items:center;gap:0.75rem;width:100%;text-align:left;background:none;border:none;border-left:2px solid transparent;color:var(--text);padding:0.75rem 1.3rem;font-size:0.84rem;transition:color 0.2s,background 0.2s,border-color 0.2s}
+.sidebar nav button .nav-icon{font-size:1rem;width:1.2em;text-align:center;flex-shrink:0}
+.sidebar nav button:hover{color:var(--white);background:rgba(255,255,255,0.03)}
+.sidebar nav button.active{color:var(--gold);background:var(--black3);border-left-color:var(--gold)}
+.sidebar .logout{position:absolute;bottom:1.5rem;left:1.3rem}
+main{flex:1;padding:2.2rem 2.6rem;overflow-x:auto}
+main h1{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:0.3rem;color:var(--gold)}
+main .panel-sub{font-size:0.78rem;color:var(--text);margin-bottom:1.4rem}
 .panel{display:none}
-.panel.active{display:block}
+.panel.active{display:block;animation:panelIn 0.45s cubic-bezier(.16,1,.3,1) both}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* mobile: the 200px sidebar was permanently eating half of a phone
+/* mobile: the 210px sidebar was permanently eating half of a phone
    screen. Below 860px it becomes an off-canvas drawer, opened by a
    hamburger button in a small top bar, closed by the backdrop, the ×,
    Escape, or picking a nav item. */
@@ -51,56 +65,94 @@ main h1{font-size:1.3rem;margin-bottom:1.4rem;color:var(--gold)}
 .sidebar-close{display:none}
 .sidebar-backdrop{display:none}
 @media(max-width:860px){
-  .admin-topbar{display:flex;align-items:center;gap:0.9rem;padding:0.85rem 1.1rem;background:var(--black2);border-bottom:1px solid #262626;position:sticky;top:0;z-index:100}
-  .admin-topbar .hamburger-btn{display:flex;flex-direction:column;justify-content:center;gap:4px;width:32px;height:32px;background:none;border:1px solid #333;border-radius:4px;flex-shrink:0}
+  .admin-topbar{display:flex;align-items:center;gap:0.9rem;padding:0.85rem 1.1rem;background:var(--black2);border-bottom:1px solid var(--black4);position:sticky;top:0;z-index:100}
+  .admin-topbar .hamburger-btn{display:flex;flex-direction:column;justify-content:center;gap:4px;width:32px;height:32px;background:none;border:1px solid #333;border-radius:5px;flex-shrink:0}
   .admin-topbar .hamburger-btn span{display:block;width:16px;height:1.5px;background:var(--gold);margin:0 auto}
-  .admin-topbar-title{color:var(--gold);font-size:0.95rem;font-weight:600}
+  .admin-topbar-title{font-family:'Playfair Display',serif;color:var(--gold);font-size:1rem;font-weight:700}
   .shell{position:relative}
   .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:210;transform:translateX(-100%);transition:transform 0.3s ease;box-shadow:4px 0 28px rgba(0,0,0,0.55)}
   .sidebar.open{transform:translateX(0)}
-  .sidebar h2{display:flex;align-items:center;justify-content:space-between}
-  .sidebar-close{display:block;background:none;border:none;color:var(--text);font-size:1.4rem;line-height:1;cursor:pointer;padding:0 0.2rem}
+  .sidebar-brand{justify-content:space-between}
+  .sidebar-close{display:block;background:none;border:none;color:var(--text);font-size:1.5rem;line-height:1;cursor:pointer;padding:0 0.2rem}
   .sidebar-close:hover{color:var(--gold)}
   .sidebar-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:205;opacity:0;pointer-events:none;transition:opacity 0.3s ease}
   .sidebar-backdrop.show{opacity:1;pointer-events:auto}
   main{padding:1.4rem 1.1rem}
   .form-grid{grid-template-columns:1fr}
   table{min-width:640px}
+  .product-grid,.hero-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 }
 
-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:0.82rem}
-th,td{padding:0.65rem 0.7rem;border-bottom:1px solid #232323;text-align:left;vertical-align:top}
-th{color:var(--gold);font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase}
-tr:hover td{background:#161616}
+table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:0.82rem;background:var(--black2);border-radius:10px;overflow:hidden}
+th,td{padding:0.75rem 0.8rem;border-bottom:1px solid var(--black4);text-align:left;vertical-align:top}
+th{color:var(--gold);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:700}
+tr:hover td{background:#181818}
 .msg-cell{max-width:220px;white-space:pre-wrap}
-.pill{display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.03em;border:1px solid #444}
+.pill{display:inline-block;padding:0.24rem 0.65rem;border-radius:20px;font-size:0.66rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;border:1px solid #444}
 .pill.new,.pill.pending{border-color:var(--gold);color:var(--gold)}
 .pill.confirmed,.pill.completed,.pill.ready,.pill.in_stock{border-color:var(--ok);color:var(--ok)}
 .pill.cancelled,.pill.sold_out{border-color:var(--err);color:var(--err)}
+.pill.featured{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.14)}
 .row-actions{display:flex;gap:0.4rem;flex-wrap:wrap}
 .row-actions select{font-size:0.75rem;padding:0.3rem 0.4rem}
 
-.card{background:var(--black2);border:1px solid #262626;border-radius:8px;padding:1.4rem;margin-bottom:1.5rem}
-.card h3{font-size:0.95rem;color:var(--gold);margin-bottom:1rem}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.card{background:var(--black2);border:1px solid var(--black4);border-radius:12px;padding:1.6rem;margin-bottom:1.6rem;transition:border-color 0.3s}
+.card h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:1.1rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
 .form-grid .full{grid-column:1/-1}
 .form-grid textarea{width:100%;min-height:70px;resize:vertical}
 .form-grid input,.form-grid select{width:100%}
-.form-actions{margin-top:1rem;display:flex;gap:0.7rem}
-.status-line{font-size:0.8rem;margin-top:0.7rem;min-height:1.2em}
+.form-actions{margin-top:1.1rem;display:flex;gap:0.7rem}
+.status-line{font-size:0.8rem;margin-top:0.8rem;min-height:1.2em}
 .status-line.ok{color:var(--ok)}
 .status-line.err{color:var(--err)}
-.hint{font-size:0.72rem;color:#7a7566;margin-top:0.3rem}
-.empty{color:#7a7566;font-size:0.85rem;padding:1rem 0}
+.hint{font-size:0.72rem;color:#8a8478;margin-top:0.35rem;line-height:1.5}
+.empty{color:#8a8478;font-size:0.85rem;padding:1rem 0}
 .item-list{margin:0;padding-left:1.1rem}
 .item-list li{margin-bottom:0.2rem}
+
+/* loading spinner — replaces a static "Loading…" so panels feel alive */
+.loading-spin{display:inline-block;width:15px;height:15px;border:2px solid #333;border-top-color:var(--gold);border-radius:50%;animation:uzspin 0.8s linear infinite;margin-right:0.55rem;vertical-align:-3px}
+@keyframes uzspin{to{transform:rotate(360deg)}}
+
+/* upload zone — click or drag a photo/video in, see it previewed
+   immediately instead of a bare file input with no feedback */
+.upload-zone{border:2px dashed #3a3a3a;border-radius:12px;padding:1.6rem;text-align:center;cursor:pointer;transition:border-color 0.25s,background 0.25s;position:relative;overflow:hidden;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--black3)}
+.upload-zone:hover{border-color:var(--gold)}
+.upload-zone.drag-over{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.upload-zone.has-preview{padding:0;border-style:solid;border-color:var(--black4)}
+.upload-zone img,.upload-zone video{width:100%;max-height:300px;object-fit:contain;display:block;background:#000}
+.upload-zone .uz-icon{font-size:2rem;margin-bottom:0.6rem;opacity:0.55}
+.upload-zone .uz-prompt{color:var(--text);font-size:0.8rem;line-height:1.6}
+.upload-zone .uz-prompt small{display:block;opacity:0.6;font-size:0.72rem;margin-top:0.15rem}
+.uz-clear{position:absolute;top:0.6rem;right:0.6rem;width:30px;height:30px;border-radius:50%;background:rgba(10,10,10,0.75);backdrop-filter:blur(3px);border:1px solid #444;color:#fff;font-size:1.05rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.25s,transform 0.25s;z-index:2}
+.uz-clear:hover{border-color:var(--gold);transform:scale(1.08)}
+
+/* product + hero media card galleries */
+.product-grid,.hero-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.2rem;margin-bottom:1.5rem}
+.product-card,.hero-card{background:var(--black2);border:1px solid var(--black4);border-radius:12px;overflow:hidden;transition:transform 0.35s cubic-bezier(.16,1,.3,1),box-shadow 0.35s,border-color 0.35s;animation:cardIn 0.5s cubic-bezier(.16,1,.3,1) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.product-card:hover,.hero-card:hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(0,0,0,0.45);border-color:#3d3d3d}
+.pc-img{height:220px;background:#0d0d0d center/cover no-repeat;position:relative}
+.pc-badges{position:absolute;top:0.6rem;left:0.6rem;right:0.6rem;display:flex;justify-content:space-between;pointer-events:none}
+.pc-badges .pill{backdrop-filter:blur(3px);background:rgba(10,10,10,0.55)}
+.pc-body{padding:1rem 1.1rem 1.1rem}
+.pc-body h4{font-family:'Playfair Display',serif;font-size:1.02rem;font-weight:700;color:var(--white);margin-bottom:0.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-meta{font-size:0.72rem;color:var(--text);margin-bottom:0.9rem}
+.pc-actions{display:flex;gap:0.5rem}
+.hc-media{height:140px;background:#000;position:relative}
+.hc-media img,.hc-media video{width:100%;height:100%;object-fit:cover}
+.hero-card.inactive{opacity:0.5}
+.hero-card.inactive:hover{opacity:0.85}
 </style>
 </head>
 <body>
 
 <div id="loginScreen">
   <form class="login-box" id="loginForm">
-    <h1>BLUSH CLOSET — ADMIN</h1>
+    <img src="https://blushcloset.xyz/logo.JPG" alt="" class="login-logo">
+    <h1>Blush Closet</h1>
+    <p class="login-sub">Admin Dashboard</p>
     <div class="field">
       <label for="loginUsername">Username</label>
       <input type="text" id="loginUsername" required autocomplete="username">
@@ -122,13 +174,20 @@ tr:hover td{background:#161616}
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <div class="shell">
     <div class="sidebar" id="adminSidebar">
-      <h2>Blush Closet<button class="sidebar-close" id="sidebarClose" aria-label="Close menu" type="button">&times;</button></h2>
+      <div class="sidebar-brand">
+        <img src="https://blushcloset.xyz/logo.JPG" alt="">
+        <div>
+          <div class="brand-name">Blush Closet</div>
+          <div class="brand-sub">Admin</div>
+        </div>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu" type="button">&times;</button>
+      </div>
       <nav>
-        <button data-panel="consultations" class="active">Consultations</button>
-        <button data-panel="products">Products</button>
-        <button data-panel="orders">Orders</button>
-        <button data-panel="hero">Hero Media</button>
-        <button data-panel="settings">Site Settings</button>
+        <button data-panel="consultations" class="active"><span class="nav-icon">💬</span>Consultations</button>
+        <button data-panel="products"><span class="nav-icon">👗</span>Products</button>
+        <button data-panel="orders"><span class="nav-icon">📦</span>Orders</button>
+        <button data-panel="hero"><span class="nav-icon">🎬</span>Hero Media</button>
+        <button data-panel="settings"><span class="nav-icon">⚙️</span>Site Settings</button>
       </nav>
       <button class="btn secondary logout" id="logoutBtn">Log Out</button>
     </div>
@@ -137,17 +196,26 @@ tr:hover td{background:#161616}
       <!-- CONSULTATIONS -->
       <section class="panel active" id="panel-consultations">
         <h1>Consultation Requests</h1>
-        <div id="consultationsTableWrap"><p class="empty">Loading…</p></div>
+        <p class="panel-sub">Enquiries from the site's booking form.</p>
+        <div id="consultationsTableWrap"><p class="empty"><span class="loading-spin"></span>Loading…</p></div>
       </section>
 
       <!-- PRODUCTS -->
       <section class="panel" id="panel-products">
         <h1>Products</h1>
+        <p class="panel-sub">Everything shown in the shop grid on the live site.</p>
         <div class="card">
           <h3 id="productFormTitle">Add Product</h3>
           <form id="productForm">
             <input type="hidden" id="p-id">
             <div class="form-grid">
+              <div class="full">
+                <label>Photo</label>
+                <div class="upload-zone" id="p-upload-zone"></div>
+                <input type="file" id="p-file" accept="image/*" style="display:none">
+                <p class="hint">Click the box (or drag a photo onto it) to choose an image — it's watermarked automatically. Or paste a direct image URL instead:</p>
+                <input type="text" id="p-image-url" placeholder="https://..." style="margin-top:0.5rem">
+              </div>
               <div><label>Title</label><input type="text" id="p-title" required></div>
               <div><label>Category</label><select id="p-category" required></select></div>
               <div><label>Price</label><input type="number" id="p-price" step="0.01" min="0" placeholder="Leave blank for POA"></div>
@@ -167,8 +235,6 @@ tr:hover td{background:#161616}
               <div><label>Featured</label>
                 <select id="p-featured"><option value="false">No</option><option value="true">Yes</option></select>
               </div>
-              <div class="full"><label>Upload Image (or leave blank and paste a URL below)</label><input type="file" id="p-file" accept="image/*"></div>
-              <div class="full"><label>Image URL</label><input type="text" id="p-image-url" placeholder="https://..."></div>
               <div class="full"><label>Description</label><textarea id="p-description"></textarea></div>
             </div>
             <div class="form-actions">
@@ -178,45 +244,51 @@ tr:hover td{background:#161616}
             <p class="status-line" id="productStatus"></p>
           </form>
         </div>
-        <div id="productsTableWrap"><p class="empty">Loading…</p></div>
+        <div id="productsTableWrap"><p class="empty"><span class="loading-spin"></span>Loading…</p></div>
       </section>
 
       <!-- ORDERS -->
       <section class="panel" id="panel-orders">
         <h1>Orders</h1>
-        <p class="hint" style="margin-bottom:1rem">These are order requests submitted from the site — no payment is collected yet, so treat status as your manual follow-up tracker.</p>
-        <div id="ordersTableWrap"><p class="empty">Loading…</p></div>
+        <p class="panel-sub">These are order requests submitted from the site — no payment is collected yet, so treat status as your manual follow-up tracker.</p>
+        <div id="ordersTableWrap"><p class="empty"><span class="loading-spin"></span>Loading…</p></div>
       </section>
 
       <!-- HERO MEDIA -->
       <section class="panel" id="panel-hero">
         <h1>Hero Media Rotation</h1>
+        <p class="panel-sub">The video/photo rotation on the homepage.</p>
         <div class="card">
           <h3>Add Hero Media</h3>
           <form id="heroForm">
             <div class="form-grid">
+              <div class="full">
+                <label>File</label>
+                <div class="upload-zone" id="hero-upload-zone"></div>
+                <input type="file" id="hero-file" accept="image/*,video/*" style="display:none">
+                <p class="hint">Click the box (or drag a file onto it) to choose a photo or video. Or paste a direct URL instead:</p>
+                <input type="text" id="hero-media-url" placeholder="https://..." style="margin-top:0.5rem">
+              </div>
               <div><label>Media Type</label>
                 <select id="hero-media-type"><option value="video">Video</option><option value="photo">Photo</option></select>
               </div>
               <div><label>Sort Order</label><input type="number" id="hero-sort-order" value="0"></div>
-              <div><label>Watermark (photos only)</label>
+              <div class="full"><label>Watermark</label>
                 <select id="hero-watermark"><option value="fashion">Fashion</option><option value="hair">Hair</option></select>
                 <p class="hint">Applies to both photo and video uploads. Video watermarking re-encodes the file, so it takes a bit longer to upload.</p>
               </div>
-              <div class="full"><label>Upload File (or leave blank and paste a URL below)</label><input type="file" id="hero-file" accept="image/*,video/*"></div>
-              <div class="full"><label>Media URL</label><input type="text" id="hero-media-url" placeholder="https://..."></div>
             </div>
             <div class="form-actions"><button type="submit" class="btn">Add</button></div>
             <p class="status-line" id="heroStatus"></p>
           </form>
         </div>
-        <div id="heroTableWrap"><p class="empty">Loading…</p></div>
+        <div id="heroTableWrap"><p class="empty"><span class="loading-spin"></span>Loading…</p></div>
       </section>
 
       <!-- SETTINGS -->
       <section class="panel" id="panel-settings">
         <h1>Site Settings</h1>
-        <p class="hint" style="margin-bottom:1rem">These map to small pieces of copy on the live site (e.g. stat numbers). Add a new key here, then wire it into index.html's <code>data-setting</code> attributes when you're ready to use it.</p>
+        <p class="panel-sub">These map to small pieces of copy on the live site (e.g. stat numbers). Add a new key here, then wire it into index.html's <code>data-setting</code> attributes when you're ready to use it.</p>
         <div class="card">
           <h3>Add / Update a Setting</h3>
           <form id="settingForm">
@@ -228,7 +300,7 @@ tr:hover td{background:#161616}
             <p class="status-line" id="settingStatus"></p>
           </form>
         </div>
-        <div id="settingsTableWrap"><p class="empty">Loading…</p></div>
+        <div id="settingsTableWrap"><p class="empty"><span class="loading-spin"></span>Loading…</p></div>
       </section>
     </main>
   </div>
@@ -338,6 +410,50 @@ document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
 sidebarBackdrop.addEventListener('click', closeSidebar);
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSidebar(); });
 
+// ── UPLOAD ZONE: click-or-drag a file in, see it previewed immediately.
+//    Used by both the product photo field and the hero media field. ──
+function createUploadZone(zoneEl, inputEl, acceptsVideo) {
+  function showEmpty() {
+    zoneEl.classList.remove('has-preview');
+    zoneEl.innerHTML = '<div class="uz-icon">🖼️</div><div class="uz-prompt">Click to choose a photo' + (acceptsVideo ? ' or video' : '') + '<small>or drag one here</small></div>';
+  }
+  function showPreview(url, isVideo) {
+    zoneEl.classList.add('has-preview');
+    zoneEl.innerHTML = '';
+    const media = document.createElement(isVideo ? 'video' : 'img');
+    media.src = url;
+    if (isVideo) { media.muted = true; media.controls = true; media.playsInline = true; }
+    zoneEl.appendChild(media);
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'uz-clear';
+    clearBtn.innerHTML = '&times;';
+    clearBtn.setAttribute('aria-label', 'Remove');
+    clearBtn.addEventListener('click', function (e) { e.stopPropagation(); inputEl.value = ''; showEmpty(); });
+    zoneEl.appendChild(clearBtn);
+  }
+  zoneEl.addEventListener('click', function () { inputEl.click(); });
+  zoneEl.addEventListener('dragover', function (e) { e.preventDefault(); zoneEl.classList.add('drag-over'); });
+  zoneEl.addEventListener('dragleave', function () { zoneEl.classList.remove('drag-over'); });
+  zoneEl.addEventListener('drop', function (e) {
+    e.preventDefault();
+    zoneEl.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) {
+      inputEl.files = e.dataTransfer.files;
+      inputEl.dispatchEvent(new Event('change'));
+    }
+  });
+  inputEl.addEventListener('change', function () {
+    const file = inputEl.files[0];
+    if (!file) { showEmpty(); return; }
+    showPreview(URL.createObjectURL(file), file.type.startsWith('video'));
+  });
+  showEmpty();
+  return { showPreview: showPreview, showEmpty: showEmpty };
+}
+const productUploadZone = createUploadZone(document.getElementById('p-upload-zone'), document.getElementById('p-file'), false);
+const heroUploadZone = createUploadZone(document.getElementById('hero-upload-zone'), document.getElementById('hero-file'), true);
+
 async function uploadIfFile(fileInputEl, folder, watermark) {
   const file = fileInputEl.files[0];
   if (!file) return null;
@@ -423,25 +539,29 @@ async function loadProducts() {
   const wrap = document.getElementById('productsTableWrap');
   try {
     const items = await api('/api/products');
-    if (!items.length) { wrap.innerHTML = '<p class="empty">No products yet.</p>'; return; }
-    wrap.innerHTML = '<table><thead><tr><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Order</th><th></th></tr></thead><tbody>' +
-      items.map(function (p) {
-        return '<tr data-id="' + p.id + '">' +
-          '<td>' + escapeHtml(p.title) + '<br><a href="' + escapeHtml(p.image_url) + '" target="_blank" style="font-size:0.75rem">view image</a></td>' +
-          '<td>' + escapeHtml(p.category_name || p.category_id) + '</td>' +
-          '<td>' + (p.price != null ? escapeHtml(p.currency + ' ' + p.price) : 'POA') + '</td>' +
-          '<td><span class="pill ' + p.stock_status + '">' + p.stock_status + '</span></td>' +
-          '<td>' + (p.is_featured ? 'Yes' : 'No') + '</td>' +
-          '<td>' + p.display_order + '</td>' +
-          '<td class="row-actions"><button class="btn secondary p-edit">Edit</button><button class="btn danger p-delete">Delete</button></td>' +
-          '</tr>';
-      }).join('') + '</tbody></table>';
+    if (!items.length) { wrap.innerHTML = '<p class="empty">No products yet — add your first piece above.</p>'; return; }
+    wrap.innerHTML = '<div class="product-grid">' + items.map(function (p, i) {
+      const priceLabel = p.price != null ? escapeHtml(p.currency + ' ' + p.price) : 'POA';
+      return '<div class="product-card" data-id="' + p.id + '" style="animation-delay:' + Math.min(i * 0.04, 0.4) + 's">' +
+        '<div class="pc-img" style="background-image:url(\'' + escapeHtml(p.image_url) + '\')">' +
+          '<div class="pc-badges">' +
+            (p.is_featured ? '<span class="pill featured">★ Featured</span>' : '<span></span>') +
+            '<span class="pill ' + p.stock_status + '">' + p.stock_status.replace('_', ' ') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pc-body">' +
+          '<h4>' + escapeHtml(p.title) + '</h4>' +
+          '<p class="pc-meta">' + escapeHtml(p.category_name || '') + ' · ' + priceLabel + '</p>' +
+          '<div class="pc-actions"><button class="btn secondary p-edit">Edit</button><button class="btn danger p-delete">Delete</button></div>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
 
-    wrap.querySelectorAll('tr[data-id]').forEach(function (row) {
-      const id = row.dataset.id;
+    wrap.querySelectorAll('.product-card').forEach(function (card) {
+      const id = card.dataset.id;
       const item = items.find(p => String(p.id) === id);
-      row.querySelector('.p-edit').addEventListener('click', function () { fillProductForm(item); });
-      row.querySelector('.p-delete').addEventListener('click', async function () {
+      card.querySelector('.p-edit').addEventListener('click', function () { fillProductForm(item); });
+      card.querySelector('.p-delete').addEventListener('click', async function () {
         if (!confirm('Delete "' + item.title + '"?')) return;
         await api('/api/products/' + id, { method: 'DELETE' });
         loadProducts();
@@ -466,6 +586,8 @@ function fillProductForm(item) {
   document.getElementById('p-featured').value = String(item.is_featured);
   document.getElementById('p-image-url').value = item.image_url;
   document.getElementById('p-description').value = item.description || '';
+  document.getElementById('p-file').value = '';
+  productUploadZone.showPreview(item.image_url, false);
   document.getElementById('productCancelEdit').style.display = 'inline-block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -476,6 +598,7 @@ function resetProductForm() {
   document.getElementById('p-currency').value = 'GHS';
   document.getElementById('productFormTitle').textContent = 'Add Product';
   document.getElementById('productCancelEdit').style.display = 'none';
+  productUploadZone.showEmpty();
 }
 
 document.getElementById('productCancelEdit').addEventListener('click', resetProductForm);
@@ -574,25 +697,27 @@ async function loadHeroMedia() {
   try {
     const items = await api('/api/hero-media/all');
     if (!items.length) { wrap.innerHTML = '<p class="empty">No hero media yet.</p>'; return; }
-    wrap.innerHTML = '<table><thead><tr><th>Type</th><th>Media</th><th>Order</th><th>Active</th><th></th></tr></thead><tbody>' +
-      items.map(function (i) {
-        return '<tr data-id="' + i.id + '">' +
-          '<td>' + escapeHtml(i.media_type) + '</td>' +
-          '<td><a href="' + escapeHtml(i.media_url) + '" target="_blank">view</a></td>' +
-          '<td>' + i.sort_order + '</td>' +
-          '<td>' + (i.is_active ? 'Yes' : 'No') + '</td>' +
-          '<td class="row-actions"><button class="btn secondary hero-toggle">' + (i.is_active ? 'Deactivate' : 'Activate') + '</button><button class="btn danger hero-delete">Delete</button></td>' +
-          '</tr>';
-      }).join('') + '</tbody></table>';
+    wrap.innerHTML = '<div class="hero-grid">' + items.map(function (i, idx) {
+      const mediaHtml = i.media_type === 'video'
+        ? '<video src="' + escapeHtml(i.media_url) + '" muted playsinline></video>'
+        : '<img src="' + escapeHtml(i.media_url) + '" alt="">';
+      return '<div class="hero-card' + (i.is_active ? '' : ' inactive') + '" data-id="' + i.id + '" style="animation-delay:' + Math.min(idx * 0.04, 0.4) + 's">' +
+        '<div class="hc-media">' + mediaHtml + '<span class="pill" style="position:absolute;top:0.5rem;left:0.5rem">' + i.media_type + '</span></div>' +
+        '<div class="pc-body">' +
+          '<p class="pc-meta">Order ' + i.sort_order + ' · ' + (i.is_active ? 'Active' : 'Inactive') + '</p>' +
+          '<div class="pc-actions"><button class="btn secondary hero-toggle">' + (i.is_active ? 'Deactivate' : 'Activate') + '</button><button class="btn danger hero-delete">Delete</button></div>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
 
-    wrap.querySelectorAll('tr[data-id]').forEach(function (row) {
-      const id = row.dataset.id;
+    wrap.querySelectorAll('.hero-card').forEach(function (card) {
+      const id = card.dataset.id;
       const item = items.find(i => String(i.id) === id);
-      row.querySelector('.hero-toggle').addEventListener('click', async function () {
+      card.querySelector('.hero-toggle').addEventListener('click', async function () {
         await api('/api/hero-media/' + id, { method: 'PUT', json: Object.assign({}, item, { is_active: !item.is_active }) });
         loadHeroMedia();
       });
-      row.querySelector('.hero-delete').addEventListener('click', async function () {
+      card.querySelector('.hero-delete').addEventListener('click', async function () {
         if (!confirm('Delete this hero media?')) return;
         await api('/api/hero-media/' + id, { method: 'DELETE' });
         loadHeroMedia();
@@ -624,6 +749,7 @@ document.getElementById('heroForm').addEventListener('submit', async function (e
     });
     statusEl.textContent = 'Added.'; statusEl.className = 'status-line ok';
     document.getElementById('heroForm').reset();
+    heroUploadZone.showEmpty();
     loadHeroMedia();
   } catch (err) {
     statusEl.textContent = err.message; statusEl.className = 'status-line err';

@@ -52,7 +52,7 @@ def _tile_layer(width: int, height: int, watermark: str) -> Image.Image:
     ratio = tile_w / mark.width
     mark = mark.resize((tile_w, max(int(mark.height * ratio), 1)), Image.LANCZOS)
 
-    alpha = mark.split()[3].point(lambda p: int(p * 0.4))
+    alpha = mark.split()[3].point(lambda p: int(p * 0.6))
     mark.putalpha(alpha)
     mark = mark.rotate(30, expand=True, resample=Image.BICUBIC)
 
