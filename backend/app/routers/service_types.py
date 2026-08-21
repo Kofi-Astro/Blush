@@ -1,3 +1,7 @@
+# Lists booking/consultation service options for the site's booking form
+# dropdown. Read-only from the API — service types are added/edited
+# directly in Supabase, not here (same pattern as categories.py).
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session

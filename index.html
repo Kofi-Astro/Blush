@@ -1,3 +1,21 @@
+<!--
+  Blush Closet — the public website (blushcloset.xyz).
+
+  This is one single self-contained HTML file: all the page styling lives in
+  the <style> block in <head>, and all the interactive behavior lives in the
+  <script> block just before </body>. There's no build step — editing this
+  file and pushing to GitHub is the entire deployment process (Cloudflare
+  picks up the change automatically).
+
+  How it gets its content: every section below (hero video, shop grid,
+  category photos) first tries to load real data from the backend API
+  (see API_BASE_URL near the top of the <script> block). If the API can't
+  be reached for any reason, the page quietly falls back to the photos/
+  videos sitting in the media/ folder of this repo, or to the small
+  hard-coded CURATED_FALLBACK list — so the site never looks broken even
+  if the backend is down. Look for "── SECTION NAME ──" comments inside
+  the <style> and <script> blocks to jump to a specific part.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1125,6 +1143,10 @@ const CURATED_FALLBACK = [
 let discoveredItems = []; // auto-probed photos/videos — populated once initLookbookDiscovery resolves
 let curatedItems = []; // whatever is currently on screen, in lightbox-navigable order
 
+// Builds the small colored price tag shown in the corner of each shop
+// card — "Bespoke", "Sold Out", or an actual price, depending on the
+// product's fields. `no_badge` is used by auto-discovered fallback photos,
+// which have no real price data to show a badge for.
 function priceBadgeHtml(item) {
   if (item.no_badge) return '';
   if (!item.is_purchasable) return '<span class="lb-price bespoke">Bespoke</span>';
@@ -1133,6 +1155,8 @@ function priceBadgeHtml(item) {
   return '<span class="lb-price">' + amount + '</span>';
 }
 
+// The small "In Stock" / "Made to Order" line under a card's title —
+// left blank for bespoke or sold-out items, where it wouldn't make sense.
 function stockLineHtml(item) {
   if (!item.is_purchasable || item.stock_status === 'sold_out') return '';
   return '<span class="stock-line">' + (item.stock_status === 'in_stock' ? 'In Stock' : 'Made to Order') + '</span>';
@@ -1221,6 +1245,9 @@ let currentShopCategory = 'all';
 let currentShopSort = 'featured';
 let shopAvailableOnly = false;
 
+// Takes the full product list loaded from the API and applies whichever
+// category tab, "available only" checkbox, and sort dropdown are currently
+// selected — this is what actually decides what shows in the shop grid.
 function getShopList(categorySlug) {
   let list = allProducts.slice();
   if (categorySlug && categorySlug !== 'all') {
@@ -1360,6 +1387,8 @@ const orderStatus = document.getElementById('orderStatus');
 const orderSubmitBtn = document.getElementById('orderSubmitBtn');
 let currentOrderProduct = null;
 
+// Fills in and opens the "Order This" popup for one specific product —
+// called when a shop card's or lightbox's order button is clicked.
 function openOrderModal(product) {
   currentOrderProduct = product;
   document.getElementById('orderModalTitle').textContent = product.title || '';
@@ -1466,6 +1495,11 @@ orderForm.addEventListener('submit', function (e) {
 });
 
 // ── LOOKBOOK FILTER (also driven by the category strip above it) ──
+// Switches the shop grid to one category (or "all"). Called both from the
+// tab buttons below the "Shop the Collection" heading, and from clicking
+// one of the four category-strip photos further up the page — in the
+// latter case there's no tab button to mark active, so it finds the
+// matching tab by name instead and scrolls the shop section into view.
 function filterLookbook(category, btnEl) {
   document.querySelectorAll('.lbtab').forEach(t => t.classList.remove('active'));
   if (btnEl) {
@@ -1486,6 +1520,10 @@ function filterLookbook(category, btnEl) {
 }
 
 // ── BOOKING FORM (Formspree) ──
+// Handles the consultation/booking form submit: sends the entry to
+// Formspree (which emails it straight to the inbox) AND saves it to the
+// database via the API (which is what makes it show up in /admin). Both
+// happen at once so a booking is never lost even if one of the two fails.
 function bcSendBooking(event) {
   event.preventDefault();
   if (document.getElementById('bc-website').value) return; // honeypot tripped — silently drop

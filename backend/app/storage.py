@@ -1,3 +1,8 @@
+# Handles uploading admin-added photos/videos to Supabase Storage (the
+# "media" bucket) — used by routers/uploads.py whenever the admin dashboard
+# adds a product photo or hero video. Routes images/videos through the
+# watermarking step in watermark.py before they ever get saved.
+
 import mimetypes
 import uuid
 
@@ -14,6 +19,7 @@ _client: Client | None = None
 
 
 def get_storage_client() -> Client:
+    """Reuses one Supabase client across requests instead of reconnecting every time."""
     global _client
     if _client is None:
         _client = create_client(settings.supabase_url, settings.supabase_service_role_key)
@@ -45,10 +51,13 @@ async def upload_media_file(file: UploadFile, folder: str, watermark: str | None
         content_type = "video/mp4"
         extension = ".mp4"
     else:
+        # No watermark requested (or not an image/video) — upload as-is.
         extension = mimetypes.guess_extension(content_type) or ""
         if not extension and file.filename and "." in file.filename:
             extension = "." + file.filename.rsplit(".", 1)[-1]
 
+    # Random filename (not the original name) so uploads never collide or
+    # leak the customer's/admin's local filesystem naming.
     object_path = f"{folder}/{uuid.uuid4().hex}{extension}"
 
     client = get_storage_client()
@@ -64,4 +73,6 @@ async def upload_media_file(file: UploadFile, folder: str, watermark: str | None
             detail=f"Upload to storage failed: {exc}",
         ) from exc
 
+    # The permanent public URL that gets saved into the product/hero_media
+    # row and used directly as the <img>/<video> src on the live site.
     return client.storage.from_(settings.supabase_media_bucket).get_public_url(object_path)

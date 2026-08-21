@@ -1,3 +1,9 @@
+# The database tables, one Python class per table (SQLAlchemy ORM models).
+# Each class here mirrors a table that already exists in Supabase Postgres —
+# these classes don't create the tables, they just describe their shape so
+# the rest of the backend can read/write rows as normal Python objects
+# instead of writing raw SQL everywhere.
+
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
@@ -10,6 +16,10 @@ from .database import Base
 
 
 class ProductCategory(Base):
+    """A shop category, e.g. "Fashion", "Hair", "Bridal". Seeded directly in
+    Supabase — there's no admin UI to add/edit categories, only to assign
+    products to one."""
+
     __tablename__ = "product_categories"
 
     id: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
@@ -19,6 +29,9 @@ class ProductCategory(Base):
 
 
 class ServiceType(Base):
+    """A consultation/booking service, e.g. "Custom Fitting", "Hair
+    Styling" — shown as options on the site's booking form."""
+
     __tablename__ = "service_types"
 
     id: Mapped[int] = mapped_column(SmallInteger, primary_key=True)
@@ -28,6 +41,11 @@ class ServiceType(Base):
 
 
 class Product(Base):
+    """One item in the shop — a garment, hair piece, or featured customer
+    photo. `image_url` points at the (already-watermarked) file in Supabase
+    Storage. `is_featured` items are the "customer already received this"
+    showcase photos; `is_purchasable` controls whether an order button shows."""
+
     __tablename__ = "products"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
@@ -47,6 +65,10 @@ class Product(Base):
 
 
 class Order(Base):
+    """A customer order request submitted from the site's order form. This
+    is a request to be contacted/paid offline, not a live payment — there's
+    no payment processor wired up yet."""
+
     __tablename__ = "orders"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
@@ -62,6 +84,11 @@ class Order(Base):
 
 
 class OrderItem(Base):
+    """One line item within an Order. `product_title_snapshot` and
+    `price_at_order` freeze the product's title/price at the moment of
+    ordering, so editing or even deleting the product later doesn't change
+    what a past order says was bought."""
+
     __tablename__ = "order_items"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
@@ -77,6 +104,10 @@ class OrderItem(Base):
 
 
 class ConsultationRequest(Base):
+    """A booking/consultation request submitted from the site's booking form
+    (separate from a product Order — this is for "come measure/style me",
+    not "sell me this specific item")."""
+
     __tablename__ = "consultation_requests"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
@@ -92,6 +123,10 @@ class ConsultationRequest(Base):
 
 
 class HeroMedia(Base):
+    """A photo or video shown in the site's rotating hero banner up top.
+    `media_type` is "photo" or "video"; `sort_order` controls the sequence;
+    `is_active` lets the admin hide an item without deleting it."""
+
     __tablename__ = "hero_media"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -103,6 +138,10 @@ class HeroMedia(Base):
 
 
 class SiteSetting(Base):
+    """A simple key/value store for small bits of editable site copy or
+    stats (e.g. "years_experience": "8") that the admin can tweak without
+    a developer touching the code."""
+
     __tablename__ = "site_settings"
 
     key: Mapped[str] = mapped_column(String(64), primary_key=True)

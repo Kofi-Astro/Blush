@@ -1,3 +1,10 @@
+# Stamps every uploaded product/hero photo and video with a repeating,
+# semi-transparent brand-logo pattern, so a screenshot or download still
+# carries a visible "this belongs to Blush Closet" mark. Photos are done
+# with Pillow (pure Python image editing); videos are done by shelling out
+# to ffmpeg, since Python has no native video encoder. Called from
+# storage.py whenever the admin dashboard uploads with a watermark selected.
+
 import subprocess
 import tempfile
 from io import BytesIO
@@ -7,6 +14,8 @@ from PIL import Image, ImageDraw
 
 ASSETS_DIR = Path(__file__).parent / "assets"
 
+# Which logo file to stamp with, based on the category picked in the admin
+# dashboard ("fashion" items get the main logo, "hair" items get the hair logo).
 WATERMARK_PATHS = {
     "fashion": ASSETS_DIR / "watermark-fashion.jpg",
     "hair": ASSETS_DIR / "watermark-hair.jpg",

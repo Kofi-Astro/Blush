@@ -1,3 +1,8 @@
+# Customer orders: submitted from the site's "order this" form (public, no
+# login needed), then tracked through fulfillment from the admin dashboard's
+# Orders tab (login required). There is no payment processor here — an
+# order is just a structured "please contact me, I want this" request.
+
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -18,6 +23,7 @@ VALID_STATUSES = {"pending", "confirmed", "processing", "ready", "completed", "c
 def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
     """Public — an order request, not a payment. Product title/price are snapshotted
     server-side from the current product record so they can't be spoofed by the client."""
+    # Honeypot spam check — see the matching comment in consultations.py.
     if payload.website:
         raise HTTPException(status_code=400, detail="Invalid submission")
 
@@ -28,7 +34,7 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
         delivery_notes=payload.delivery_notes,
     )
     db.add(order)
-    db.flush()
+    db.flush()  # assigns order.id without fully committing yet, so items below can reference it
 
     for item in payload.items:
         product = db.get(Product, item.product_id) if item.product_id else None
@@ -49,6 +55,7 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
 
 @router.get("", response_model=list[OrderOut], dependencies=[Depends(require_admin)])
 def list_orders(status_filter: str | None = None, db: Session = Depends(get_db)):
+    """Admin-only — powers the dashboard's Orders list, newest first, optionally filtered by status."""
     stmt = select(Order).options(selectinload(Order.items)).order_by(Order.created_at.desc())
     if status_filter:
         stmt = stmt.where(Order.status == status_filter)
@@ -57,6 +64,7 @@ def list_orders(status_filter: str | None = None, db: Session = Depends(get_db))
 
 @router.patch("/{order_id}", response_model=OrderOut, dependencies=[Depends(require_admin)])
 def update_order_status(order_id: uuid.UUID, payload: OrderStatusUpdate, db: Session = Depends(get_db)):
+    """Admin-only — moves an order through fulfillment (pending → confirmed → processing → ready → completed/cancelled)."""
     if payload.status not in VALID_STATUSES:
         raise HTTPException(status_code=400, detail=f"status must be one of {sorted(VALID_STATUSES)}")
 
@@ -71,6 +79,7 @@ def update_order_status(order_id: uuid.UUID, payload: OrderStatusUpdate, db: Ses
 
 @router.delete("/{order_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)])
 def delete_order(order_id: uuid.UUID, db: Session = Depends(get_db)):
+    """Admin-only — permanently removes an order and its line items."""
     order = db.get(Order, order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -80,6 +89,7 @@ def delete_order(order_id: uuid.UUID, db: Session = Depends(get_db)):
 
 
 def _get_with_items(db: Session, order_id: uuid.UUID) -> Order:
+    """Re-fetches an order with its line items attached, for returning in API responses."""
     return db.execute(
         select(Order).options(selectinload(Order.items)).where(Order.id == order_id)
     ).scalar_one()

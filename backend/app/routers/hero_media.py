@@ -1,3 +1,8 @@
+# The rotating photo/video banner at the top of the site. The public
+# endpoint only returns items marked "active", in the order they should
+# play; the admin endpoints (list-all, create, edit, delete) let the
+# dashboard manage the full set, including inactive/hidden ones.
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -12,19 +17,21 @@ router = APIRouter(prefix="/api/hero-media", tags=["hero-media"])
 
 @router.get("", response_model=list[HeroMediaOut])
 def list_hero_media(db: Session = Depends(get_db)):
-    """Public endpoint — active hero media in display order."""
+    """Public endpoint — active hero media in display order. This is what the live site's banner uses."""
     stmt = select(HeroMedia).where(HeroMedia.is_active.is_(True)).order_by(HeroMedia.sort_order, HeroMedia.id)
     return db.execute(stmt).scalars().all()
 
 
 @router.get("/all", response_model=list[HeroMediaOut], dependencies=[Depends(require_admin)])
 def list_all_hero_media(db: Session = Depends(get_db)):
+    """Admin-only — every hero item including inactive ones, for the dashboard's Hero Media gallery."""
     stmt = select(HeroMedia).order_by(HeroMedia.sort_order, HeroMedia.id)
     return db.execute(stmt).scalars().all()
 
 
 @router.post("", response_model=HeroMediaOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_admin)])
 def create_hero_media(payload: HeroMediaIn, db: Session = Depends(get_db)):
+    """Admin-only — adds a new hero photo/video (already uploaded+watermarked via /api/uploads)."""
     item = HeroMedia(**payload.model_dump())
     db.add(item)
     db.commit()
@@ -34,6 +41,7 @@ def create_hero_media(payload: HeroMediaIn, db: Session = Depends(get_db)):
 
 @router.put("/{item_id}", response_model=HeroMediaOut, dependencies=[Depends(require_admin)])
 def update_hero_media(item_id: int, payload: HeroMediaIn, db: Session = Depends(get_db)):
+    """Admin-only — edits a hero item's order/active state, or swaps its file."""
     item = db.get(HeroMedia, item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Hero media not found")
@@ -48,6 +56,7 @@ def update_hero_media(item_id: int, payload: HeroMediaIn, db: Session = Depends(
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)])
 def delete_hero_media(item_id: int, db: Session = Depends(get_db)):
+    """Admin-only — removes a hero item from the banner rotation for good."""
     item = db.get(HeroMedia, item_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Hero media not found")

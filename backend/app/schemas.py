@@ -1,3 +1,10 @@
+# The "shape" of data coming in and out of the API — separate from the
+# database models in models.py. Splitting these apart means the API can
+# validate/reject bad input (e.g. a missing email) and hide internal-only
+# database fields, without that logic leaking into the database layer.
+# "...In" classes are what the admin dashboard sends when creating/editing
+# something; "...Out" classes are what the API sends back to any caller.
+
 import uuid
 from datetime import date, datetime
 from decimal import Decimal

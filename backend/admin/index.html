@@ -1,3 +1,19 @@
+<!--
+  Blush Closet — Admin Dashboard (served at /admin, e.g. admin.blushcloset.xyz).
+
+  This is the point-and-click tool for managing everything on the live site:
+  products, orders, booking requests, the homepage hero video/photo
+  rotation, and small site text settings. It's a single self-contained
+  HTML file (styling in <style>, behavior in the <script> at the bottom) —
+  FastAPI serves this exact file as-is (see the admin_dir mount in
+  backend/app/main.py), there's no separate build step.
+
+  Everything here talks to the backend API using the small `api()` helper
+  near the top of the <script> block, which automatically attaches the
+  login token and redirects back to the login screen if it ever expires.
+  Look for "── SECTION NAME ──" comments in the <script> block for each
+  tab's logic (Consultations, Products, Orders, Hero Media, Settings).
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -316,10 +332,19 @@ const TOKEN_KEY = 'blush_admin_token';
 // make sure that origin is in the backend's ALLOWED_ORIGINS.
 const API_BASE_URL = '';
 
+// The login token is kept in the browser's localStorage, so refreshing the
+// page (or closing and reopening the tab) doesn't log you out — only
+// logging out explicitly, or the token expiring, does (see config.py's
+// jwt_expire_minutes, currently 12 hours).
 function getToken() { return localStorage.getItem(TOKEN_KEY); }
 function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
 function clearToken() { localStorage.removeItem(TOKEN_KEY); }
 
+// The one function every tab uses to talk to the backend. Automatically
+// attaches the login token to every request, turns a JS object passed as
+// `json` into a real request body, and — if the server says the session
+// has expired (401) — signs out and shows the login screen instead of
+// leaving the page silently broken.
 async function api(path, options) {
   options = options || {};
   const headers = options.headers || {};
@@ -344,6 +369,10 @@ async function api(path, options) {
   return res.json();
 }
 
+// Safety net used everywhere a product title, customer name, etc. gets
+// inserted into the page — turns special characters like < and & into
+// their safe HTML equivalents, so a customer typing something like
+// "<script>" into a form field can't run code on the admin's screen.
 function escapeHtml(str) {
   return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -354,6 +383,10 @@ function showLogin() {
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
 }
+// Switches from the login screen to the dashboard and kicks off loading
+// every tab's data at once (service types/categories are fetched first
+// since consultations/products need them to show readable names instead
+// of raw IDs).
 function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
@@ -364,6 +397,8 @@ function showApp() {
   loadSettings();
 }
 
+// Handles the login screen's submit: exchanges username+password for a
+// login token via /api/auth/login, saves it, and switches to the dashboard.
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   const errEl = document.getElementById('loginError');
@@ -454,6 +489,10 @@ function createUploadZone(zoneEl, inputEl, acceptsVideo) {
 const productUploadZone = createUploadZone(document.getElementById('p-upload-zone'), document.getElementById('p-file'), false);
 const heroUploadZone = createUploadZone(document.getElementById('hero-upload-zone'), document.getElementById('hero-file'), true);
 
+// If a file was chosen in the given upload zone, sends it to the backend
+// (which watermarks it and stores it in Supabase) and returns the
+// resulting URL; returns null if no file was chosen, so the caller falls
+// back to whatever's typed into the "paste a URL instead" field.
 async function uploadIfFile(fileInputEl, folder, watermark) {
   const file = fileInputEl.files[0];
   if (!file) return null;
@@ -496,6 +535,10 @@ async function loadCategories() {
 }
 
 // ── CONSULTATIONS ──
+// Fetches every booking request and renders them as a table, with a
+// status dropdown and delete button wired up per row. Called on login and
+// again after every status change/delete so the table always reflects
+// what's actually in the database.
 async function loadConsultations() {
   const wrap = document.getElementById('consultationsTableWrap');
   try {
@@ -535,6 +578,8 @@ async function loadConsultations() {
 }
 
 // ── PRODUCTS ──
+// Fetches every product and renders them as the photo-card gallery, with
+// Edit (loads the product back into the form above) and Delete buttons.
 async function loadProducts() {
   const wrap = document.getElementById('productsTableWrap');
   try {
@@ -572,6 +617,10 @@ async function loadProducts() {
   }
 }
 
+// Copies one product's data into the Add/Edit Product form at the top of
+// the page (switching its heading to "Edit Product" and showing a Cancel
+// button), so clicking a product's Edit button reuses the same form
+// instead of needing a separate edit screen.
 function fillProductForm(item) {
   document.getElementById('productFormTitle').textContent = 'Edit Product';
   document.getElementById('p-id').value = item.id;
@@ -592,6 +641,8 @@ function fillProductForm(item) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Clears the Add/Edit Product form back to its blank "Add Product" state —
+// called after a successful save, and when Cancel Edit is clicked.
 function resetProductForm() {
   document.getElementById('productForm').reset();
   document.getElementById('p-id').value = '';
@@ -603,6 +654,10 @@ function resetProductForm() {
 
 document.getElementById('productCancelEdit').addEventListener('click', resetProductForm);
 
+// Handles both "Add Product" and "Edit Product" (the same form does both —
+// whether p-id has a value decides which). Uploads the chosen photo first
+// (auto-picking the fashion or hair watermark based on the selected
+// category) if one was chosen, otherwise falls back to a pasted URL.
 document.getElementById('productForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   const statusEl = document.getElementById('productStatus');
@@ -650,6 +705,10 @@ document.getElementById('productForm').addEventListener('submit', async function
 });
 
 // ── ORDERS ──
+// Fetches every order request and renders them as a table (customer,
+// ordered items, notes, a status dropdown to track fulfillment, and
+// delete). These are requests to be contacted about, not paid orders —
+// see the panel's own subtitle in the HTML above.
 async function loadOrders() {
   const wrap = document.getElementById('ordersTableWrap');
   try {
@@ -692,6 +751,10 @@ async function loadOrders() {
 }
 
 // ── HERO MEDIA ──
+// Fetches every hero item — active and inactive alike, unlike the public
+// site which only ever sees active ones — and renders them as a card
+// gallery with the photo/video playable inline, plus Activate/Deactivate
+// and Delete buttons.
 async function loadHeroMedia() {
   const wrap = document.getElementById('heroTableWrap');
   try {
@@ -728,6 +791,9 @@ async function loadHeroMedia() {
   }
 }
 
+// Handles "Add Hero Media": uploads the chosen photo/video with the
+// selected watermark (or falls back to a pasted URL), then creates the
+// hero_media row so it starts appearing in the homepage rotation.
 document.getElementById('heroForm').addEventListener('submit', async function (e) {
   e.preventDefault();
   const statusEl = document.getElementById('heroStatus');
@@ -757,6 +823,9 @@ document.getElementById('heroForm').addEventListener('submit', async function (e
 });
 
 // ── SETTINGS ──
+// Fetches every key/value site setting and lists them in a simple table —
+// this tab has no edit/delete buttons per row; the form below re-saves a
+// key to change its value (see the PUT /api/settings/{key} handler below).
 async function loadSettings() {
   const wrap = document.getElementById('settingsTableWrap');
   try {
@@ -789,6 +858,9 @@ document.getElementById('settingForm').addEventListener('submit', async function
 });
 
 // ── boot ──
+// The very first thing that runs when the page loads: if a login token is
+// already saved from a previous visit, skip straight to the dashboard;
+// otherwise show the login screen.
 if (getToken()) { showApp(); } else { showLogin(); }
 </script>
 </body>

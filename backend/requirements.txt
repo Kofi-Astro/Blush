@@ -1,12 +1,27 @@
+# The web framework + server that run the whole backend.
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
+
+# Talking to the Supabase Postgres database.
 sqlalchemy==2.0.36
 psycopg2-binary==2.9.10
+
+# Validating/parsing API request and response data (schemas.py), plus
+# reading config from environment variables (config.py). email-validator
+# is what lets pydantic check that a submitted email actually looks like one.
 pydantic==2.13.4
 pydantic-settings==2.7.0
 email-validator==2.2.0
+
+# Admin login: signing/checking login tokens and hashing passwords.
 pyjwt==2.13.0
 bcrypt==4.2.1
+
+# Uploading watermarked photos/videos to Supabase Storage.
 supabase==2.31.0
+# Required by FastAPI to accept file uploads (multipart/form-data).
 python-multipart==0.0.32
+
+# Image watermarking (watermark.py). Video watermarking instead shells out
+# to ffmpeg directly, which is installed separately — see railpack.json.
 Pillow==12.3.0
